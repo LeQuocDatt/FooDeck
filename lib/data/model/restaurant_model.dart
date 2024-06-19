@@ -39,10 +39,12 @@ enum FoodCategory { Popular, Deals, Wraps, Beverages, Sandwiches }
 class Addon {
   final String addonName, size;
   final int priceSize, price;
+  bool like;
   RadioType radio;
 
   Addon(
-      {required this.radio,
+      {this.like = false,
+      required this.radio,
       required this.addonName,
       required this.size,
       required this.priceSize,

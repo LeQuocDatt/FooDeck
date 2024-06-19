@@ -5,7 +5,6 @@ part 'restaurant_cart_state.dart';
 
 class RestaurantCartBloc
     extends Bloc<RestaurantCartEvent, RestaurantCartState> {
-  int currentCard = 0;
   int deliveryFee = 10;
   int vat = 4;
   int coupon = 4;
@@ -48,6 +47,8 @@ class RestaurantCartBloc
   FutureOr<void> restaurantCartNavigateToCheckOutEvent(
       RestaurantCartNavigateToCheckOutEvent event,
       Emitter<RestaurantCartState> emit) {
+    AppRouter.navigatorKey.currentState!
+        .pushNamed(AppRouter.restaurantCheckOut);
     emit(RestaurantCartNavigateToCheckOutState());
   }
 }

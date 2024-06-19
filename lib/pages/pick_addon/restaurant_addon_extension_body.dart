@@ -137,7 +137,7 @@ Widget restaurantAddonBody(BuildContext context) {
                 ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: restaurantAddonBloc.like.length,
+                      itemCount: RestaurantData.food.availableAddons.length - 1,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         Addon addon =
@@ -157,7 +157,8 @@ Widget restaurantAddonBody(BuildContext context) {
                                   color: Colors.grey),
                               title: CustomText(
                                   content: addon.addonName, color: Colors.grey),
-                              value: restaurantAddonBloc.like[index],
+                              value: RestaurantData
+                                  .food.availableAddons[index].like,
                               onChanged: (bool? value) {
                                 restaurantAddonBloc.add(
                                     RestaurantAddonPickToppingEvent(

@@ -1,5 +1,3 @@
-import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:template/source/export.dart';
 
 part 'restaurant_addon_event.dart';
@@ -9,14 +7,15 @@ class RestaurantAddonBloc
     extends Bloc<RestaurantAddonEvent, RestaurantAddonState> {
   RadioType turnOn = RadioType.a;
   String note = '';
-  List<bool> like = [false, false];
-  List<int> slot = [0, 0];
   int get totalPrice {
     int addonPriceSize = RestaurantData.addonItems
         .where((element) => element.radio == turnOn)
         .single
         .priceSize;
-    return (slot[0] + slot[1] + addonPriceSize) *
+    int addonPriceTopping = RestaurantData.food.availableAddons
+        .where((element) => element.like == true)
+        .fold(0, (previousValue, element) => previousValue + element.price);
+    return (addonPriceTopping + addonPriceSize) *
         RestaurantData.food.quantityFood;
   }
 
@@ -36,8 +35,9 @@ class RestaurantAddonBloc
       RestaurantAddonInitialEvent event, Emitter<RestaurantAddonState> emit) {
     turnOn = RadioType.a;
     note = '';
-    like = [false, false];
-    slot = [0, 0];
+    for (var e in RestaurantData.food.availableAddons) {
+      e.like = false;
+    }
     RestaurantData.food.quantityFood = 1;
     emit(RestaurantAddonLoadingState());
     emit(RestaurantAddonLoadingSuccessState());
@@ -66,10 +66,7 @@ class RestaurantAddonBloc
   FutureOr<void> restaurantAddonPickToppingEvent(
       RestaurantAddonPickToppingEvent event,
       Emitter<RestaurantAddonState> emit) {
-    like[event.index] = event.like;
-    like[event.index]
-        ? slot[event.index] = RestaurantData.addonItems[event.index].price
-        : slot[event.index] = 0;
+    RestaurantData.food.availableAddons[event.index].like = event.like;
     emit(RestaurantAddonPickToppingState());
   }
 
@@ -82,63 +79,7 @@ class RestaurantAddonBloc
   FutureOr<void> restaurantAddonNavigateToCartEvent(
       RestaurantAddonNavigateToCartEvent event,
       Emitter<RestaurantAddonState> emit) {
-    addToCart(event.context);
+    CommonUtils.addToCart(event.context, turnOn, note, totalPrice);
     emit(RestaurantAddonNavigateToCartState());
-  }
-
-  void addToCart(BuildContext context) {
-    FocusManager.instance.primaryFocus?.unfocus();
-    String size = RestaurantData.addonItems
-        .where((element) => element.radio == turnOn)
-        .single
-        .size;
-    List<String> currentSelect = [];
-    like[0] == true
-        ? currentSelect.add(RestaurantData.addonItems[0].addonName)
-        : currentSelect.add('');
-    like[1] == true
-        ? currentSelect.add(RestaurantData.addonItems[1].addonName)
-        : currentSelect.add('');
-    CartItems? cart = CartItemsListData.cartItems.firstWhereOrNull((element) {
-      bool isSameFood = element.foodItems == RestaurantData.food;
-      bool isSameNote = element.note == note;
-      bool isSameSize = element.size == size;
-      bool isSameAddon =
-          const ListEquality().equals(element.selectAddon, currentSelect);
-      return isSameFood && isSameNote && isSameSize && isSameAddon;
-    });
-    if (cart != null) {
-      showCupertinoModalPopup(
-          context: context,
-          builder: (context) => CupertinoAlertDialog(
-                title: const CustomText(
-                    content: 'Are you want to increase quantity?',
-                    textOverflow: TextOverflow.visible),
-                actions: [
-                  CupertinoDialogAction(
-                      onPressed: () {
-                        cart.quantity += RestaurantData.food.quantityFood;
-                        cart.price += totalPrice;
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, AppRouter.restaurantCart);
-                      },
-                      child: const CustomText(content: 'Yes')),
-                  CupertinoDialogAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const CustomText(content: 'No')),
-                ],
-              ));
-    } else {
-      CartItemsListData.cartItems.add(CartItems(
-          note: note,
-          foodItems: RestaurantData.food,
-          size: size,
-          price: totalPrice,
-          selectAddon: currentSelect,
-          quantity: RestaurantData.food.quantityFood));
-      Navigator.pushNamed(context, AppRouter.restaurantCart);
-    }
   }
 }

@@ -91,25 +91,23 @@ class _ListSlideBannerState extends State<ListSlideBanner> {
         ValueListenableBuilder(
           valueListenable: currentCard,
           builder: (context, value, child) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 175),
-              child: Row(
-                children: List<Widget>.generate(
-                  3,
-                  (indexSlide) => AnimatedContainer(
-                    margin: const EdgeInsets.symmetric(horizontal: 2),
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: indexSlide == value
-                            ? AppColor.globalPink
-                            : Colors.white,
-                        border: indexSlide == value
-                            ? null
-                            : Border.all(color: Colors.grey)),
-                    duration: const Duration(milliseconds: 350),
-                  ),
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List<Widget>.generate(
+                3,
+                (indexSlide) => AnimatedContainer(
+                  margin: const EdgeInsets.symmetric(horizontal: 2),
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: indexSlide == value
+                          ? AppColor.globalPink
+                          : Colors.white,
+                      border: indexSlide == value
+                          ? null
+                          : Border.all(color: Colors.grey)),
+                  duration: const Duration(milliseconds: 350),
                 ),
               ),
             );

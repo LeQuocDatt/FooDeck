@@ -20,8 +20,11 @@ class _CustomSlidePageState extends State<CustomSlidePage> {
     return PageView.builder(
         controller: pageController,
         onPageChanged: (value) {
-          widget.currentCard!.value = value;
-          cardIndex = value;
+          if (widget.currentCard != null) {
+            widget.currentCard!.value = value;
+          } else {
+            cardIndex = value;
+          }
         },
         scrollBehavior: const ScrollBehavior(),
         clipBehavior: Clip.none,

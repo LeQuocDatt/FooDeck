@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:template/source/export.dart';
 
@@ -186,6 +187,62 @@ class CommonUtils {
           'Review Sent');
       Future.delayed(const Duration(milliseconds: 3000),
           () => AppRouter.navigatorKey.currentState!.pop());
+    }
+  }
+
+  static addToCart(
+      BuildContext context, RadioType turnOn, String note, int totalPrice) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    String size = RestaurantData.addonItems
+        .where((element) => element.radio == turnOn)
+        .single
+        .size;
+    List<String> currentSelect = [];
+    for (var element in RestaurantData.food.availableAddons) {
+      element.like == true
+          ? currentSelect.add(element.addonName)
+          : currentSelect.add('');
+    }
+    CartItems? cart = CartItemsListData.cartItems.firstWhereOrNull((element) {
+      bool isSameFood = element.foodItems == RestaurantData.food;
+      bool isSameNote = element.note == note;
+      bool isSameSize = element.size == size;
+      bool isSameAddon =
+          const ListEquality().equals(element.selectAddon, currentSelect);
+      return isSameFood && isSameNote && isSameSize && isSameAddon;
+    });
+    if (cart != null) {
+      showCupertinoModalPopup(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+                title: const CustomText(
+                    content: 'Are you want to increase quantity?',
+                    textOverflow: TextOverflow.visible),
+                actions: [
+                  CupertinoDialogAction(
+                      onPressed: () {
+                        cart.quantity += RestaurantData.food.quantityFood;
+                        cart.price += totalPrice;
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, AppRouter.restaurantCart);
+                      },
+                      child: const CustomText(content: 'Yes')),
+                  CupertinoDialogAction(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const CustomText(content: 'No')),
+                ],
+              ));
+    } else {
+      CartItemsListData.cartItems.add(CartItems(
+          note: note,
+          foodItems: RestaurantData.food,
+          size: size,
+          price: totalPrice,
+          selectAddon: currentSelect,
+          quantity: RestaurantData.food.quantityFood));
+      Navigator.pushNamed(context, AppRouter.restaurantCart);
     }
   }
 

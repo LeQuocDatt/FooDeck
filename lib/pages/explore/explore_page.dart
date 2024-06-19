@@ -84,26 +84,29 @@ class _ExplorePageState extends State<ExplorePage> {
           ),
         ),
         body: const SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(24, 24, 24, 40),
-                child: TopListShopping(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 40),
-                child: ListSlideBanner(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 40),
-                child: MiddleSlideList(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
-                child: BottomListShopping(),
-              )
-            ],
+          child: SizedBox(
+            height: 2000,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(24, 24, 24, 40),
+                  child: TopListShopping(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 40),
+                  child: ListSlideBanner(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 40),
+                  child: MiddleSlideList(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
+                  child: BottomListShopping(),
+                )
+              ],
+            ),
           ),
         ),
         floatingActionButton:

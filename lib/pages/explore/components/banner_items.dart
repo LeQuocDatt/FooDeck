@@ -37,62 +37,74 @@ class BannerItems extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: paddingImage ?? EdgeInsets.zero,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Stack(alignment: Alignment.topRight, children: [
-          GestureDetector(
-            onTap: onTap,
-            child: Card(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(
-                      image: AssetImage(
-                        foodImage,
-                      ),
-                      fit: BoxFit.cover,
-                    )),
-                width: widthImage ?? MediaQuery.of(context).size.width,
-                height: 160,
-              ),
-            ),
-          ),
-          badge ??
-              Positioned(
-                  left: 12,
-                  bottom: 12,
-                  child: Card(
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          child: CustomText(
-                              content: deliveryTime,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold)))),
-          heartIcon ??
+      child: SizedBox(
+        height: 300,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(
+            child: Stack(alignment: Alignment.topRight, children: [
               GestureDetector(
-                  onTap: action,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 12, top: 12),
-                    child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: restaurantModel == null
-                            ? null
-                            : BlocConsumer<ExplorePageBloc, ExplorePageState>(
-                                buildWhen: (previous, current) =>
-                                    current is ExplorePageLikeState,
-                                listener: (BuildContext context,
-                                    ExplorePageState state) {
-                                  if (state is ExplorePageLikeState) {
-                                    CommonUtils.toggleLike(state, context);
-                                  }
-                                },
-                                builder: (context, state) {
-                                  switch (state.runtimeType) {
-                                    case ExplorePageLikeState:
+                onTap: onTap,
+                child: Card(
+                  elevation: 10,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: AssetImage(
+                            foodImage,
+                          ),
+                          fit: BoxFit.cover,
+                        )),
+                    width: widthImage ?? MediaQuery.of(context).size.width,
+                  ),
+                ),
+              ),
+              badge ??
+                  Positioned(
+                      left: 12,
+                      bottom: 12,
+                      child: Card(
+                          child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: CustomText(
+                                  content: deliveryTime,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold)))),
+              heartIcon ??
+                  GestureDetector(
+                      onTap: action,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 12, top: 12),
+                        child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: restaurantModel == null
+                                ? null
+                                : BlocConsumer<ExplorePageBloc,
+                                    ExplorePageState>(
+                                    buildWhen: (previous, current) =>
+                                        current is ExplorePageLikeState,
+                                    listener: (BuildContext context,
+                                        ExplorePageState state) {
+                                      if (state is ExplorePageLikeState) {
+                                        CommonUtils.toggleLike(state, context);
+                                      }
+                                    },
+                                    builder: (context, state) {
+                                      switch (state.runtimeType) {
+                                        case ExplorePageLikeState:
+                                          return SavedListData.saveFood
+                                                  .contains(restaurantModel)
+                                              ? const Icon(Icons.favorite,
+                                                  color: AppColor.globalPink)
+                                              : const Icon(
+                                                  Icons.favorite_border,
+                                                  color: Colors.white,
+                                                );
+                                      }
                                       return SavedListData.saveFood
                                               .contains(restaurantModel)
                                           ? const Icon(Icons.favorite,
@@ -101,43 +113,43 @@ class BannerItems extends StatelessWidget {
                                               Icons.favorite_border,
                                               color: Colors.white,
                                             );
-                                  }
-                                  return SavedListData.saveFood
-                                          .contains(restaurantModel)
-                                      ? const Icon(Icons.favorite,
-                                          color: AppColor.globalPink)
-                                      : const Icon(
-                                          Icons.favorite_border,
-                                          color: Colors.white,
-                                        );
-                                },
-                              )),
-                  ))
-        ]),
-        Padding(
-          padding: paddingText ?? const EdgeInsets.only(top: 8),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              CustomText(content: shopName, fontWeight: FontWeight.bold),
-              CustomText(content: shopAddress, fontSize: 15, color: Colors.grey)
+                                    },
+                                  )),
+                      ))
             ]),
-            voteStar ??
-                TextButton.icon(
-                    style: const ButtonStyle(
-                        padding: WidgetStatePropertyAll(EdgeInsets.zero)),
-                    onPressed: null,
-                    label: CustomText(
-                        content: rateStar,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                    icon: Image.asset(
-                      Assets.star,
-                      fit: BoxFit.cover,
-                    ))
-          ]),
-        )
-      ]),
+          ),
+          Padding(
+            padding: paddingText ?? const EdgeInsets.only(top: 8),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                            content: shopName, fontWeight: FontWeight.bold),
+                        CustomText(
+                            content: shopAddress,
+                            fontSize: 15,
+                            color: Colors.grey)
+                      ]),
+                  voteStar ??
+                      TextButton.icon(
+                          style: const ButtonStyle(
+                              padding: WidgetStatePropertyAll(EdgeInsets.zero)),
+                          onPressed: null,
+                          label: CustomText(
+                              content: rateStar,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                          icon: Image.asset(
+                            Assets.star,
+                            fit: BoxFit.cover,
+                          ))
+                ]),
+          )
+        ]),
+      ),
     );
   }
 }
