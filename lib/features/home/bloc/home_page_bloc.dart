@@ -12,7 +12,22 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
   FutureOr<void> homePageInitialEvent(
       HomePageInitialEvent event, Emitter<HomePageState> emit) async {
     emit(HomePageLoadingState());
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await AsyncFunctions.updateData(
+        'users',
+        {
+          'address': SharedPrefs.getString(SharedPrefs.keyUserAddress) ?? '',
+          'latitude':
+              SharedPrefs.getDouble(SharedPrefs.keyUserLatitude) ?? kLatitude,
+          'longitude':
+              SharedPrefs.getDouble(SharedPrefs.keyUserLongitude) ?? kLongitude
+        },
+        user.id,
+        PopUp.deny);
+    await AsyncFunctions.addUserDataToLocalStorage();
+    await AsyncFunctions.addRestaurantDataToLocalStorage();
+    await AsyncFunctions.addCardDataToLocalStorage();
+    await AsyncFunctions.addLocationDataToLocalStorage();
+    await AsyncFunctions.addOrderCompleteDataToLocalStorage();
     emit(HomePageSelectIndexState(index: 0));
   }
 

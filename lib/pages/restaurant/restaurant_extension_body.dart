@@ -12,10 +12,11 @@ class RestaurantBody extends StatelessWidget {
       builder: (context, state) {
         switch (state.runtimeType) {
           case RestaurantPageLoadingSuccessState:
+            final success = state as RestaurantPageLoadingSuccessState;
             return TabBarView(
-                children: FoodCategory.values.map((category) {
-              List<FoodItems> categoryMenu = CommonUtils.sortFood(
-                  category, RestaurantData.restaurantModel.foodItems);
+                children: type.map((category) {
+              List<FoodModel> categoryMenu =
+                  CommonUtils.sortFood(category, success.foods);
               return ListView.separated(
                   itemCount: categoryMenu.length,
                   physics: const NeverScrollableScrollPhysics(),
@@ -39,13 +40,13 @@ class RestaurantBody extends StatelessWidget {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(16),
                                       image: DecorationImage(
-                                          image: AssetImage(food.picture),
+                                          image: AssetImage(food.foodImage),
                                           fit: BoxFit.cover))),
                               const SizedBox(width: 20),
                               Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CustomText(content: food.nameFood),
+                                    CustomText(content: food.foodName),
                                     CustomText(
                                         content: food.detail,
                                         fontSize: 15,

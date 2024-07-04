@@ -5,22 +5,22 @@ part 'restaurant_addon_state.dart';
 
 class RestaurantAddonBloc
     extends Bloc<RestaurantAddonEvent, RestaurantAddonState> {
-  RadioType turnOn = RadioType.a;
+  String turnOn = 'a';
   String note = '';
+  int quantity = 1;
   int get totalPrice {
-    int addonPriceSize = RestaurantData.addonItems
-        .where((element) => element.radio == turnOn)
-        .single
-        .priceSize;
-    int addonPriceTopping = RestaurantData.food.availableAddons
+    int addonPriceSize =
+        addons.where((element) => element.type == turnOn).single.sizePrice;
+    int addonPriceTopping = addons
         .where((element) => element.like == true)
-        .fold(0, (previousValue, element) => previousValue + element.price);
-    return (addonPriceTopping + addonPriceSize) *
-        RestaurantData.food.quantityFood;
+        .fold(
+            0, (previousValue, element) => previousValue + element.addonPrice);
+    return (addonPriceTopping + addonPriceSize) * quantity;
   }
 
   RestaurantAddonBloc() : super(RestaurantAddonInitial()) {
     on<RestaurantAddonInitialEvent>(restaurantAddonInitialEvent);
+    on<RestaurantAddonLikeEvent>(restaurantAddonLikeEvent);
     on<RestaurantAddonPickSizeEvent>(restaurantAddonPickSizeEvent);
     on<RestaurantAddonIncreaseQuantityEvent>(
         restaurantAddonIncreaseQuantityEvent);
@@ -31,43 +31,49 @@ class RestaurantAddonBloc
     on<RestaurantAddonNavigateToCartEvent>(restaurantAddonNavigateToCartEvent);
   }
 
-  FutureOr<void> restaurantAddonInitialEvent(
-      RestaurantAddonInitialEvent event, Emitter<RestaurantAddonState> emit) {
-    turnOn = RadioType.a;
+  FutureOr<void> restaurantAddonInitialEvent(RestaurantAddonInitialEvent event,
+      Emitter<RestaurantAddonState> emit) async {
+    emit(RestaurantAddonLoadingState());
+    turnOn = 'a';
     note = '';
-    for (var e in RestaurantData.food.availableAddons) {
+    for (var e in addons) {
       e.like = false;
     }
-    RestaurantData.food.quantityFood = 1;
-    emit(RestaurantAddonLoadingState());
-    emit(RestaurantAddonLoadingSuccessState());
+    quantity = 1;
+    emit(RestaurantAddonLoadingSuccessState(
+        addons: addons, totalPrice: totalPrice));
+  }
+
+  FutureOr<void> restaurantAddonLikeEvent(
+      RestaurantAddonLikeEvent event, Emitter<RestaurantAddonState> emit) {
+    emit(RestaurantAddonLikeState(foodModel: foodModel));
   }
 
   FutureOr<void> restaurantAddonPickSizeEvent(
       RestaurantAddonPickSizeEvent event, Emitter<RestaurantAddonState> emit) {
     turnOn = event.turnOn;
-    emit(RestaurantAddonPickSizeState());
+    emit(RestaurantAddonPickSizeState(addons: addons));
   }
 
   FutureOr<void> restaurantAddonIncreaseQuantityEvent(
       RestaurantAddonIncreaseQuantityEvent event,
       Emitter<RestaurantAddonState> emit) {
-    RestaurantData.food.quantityFood++;
+    quantity++;
     emit(RestaurantAddonIncreaseQuantityState());
   }
 
   FutureOr<void> restaurantAddonDecreaseQuantityEvent(
       RestaurantAddonDecreaseQuantityEvent event,
       Emitter<RestaurantAddonState> emit) {
-    RestaurantData.food.quantityFood--;
+    quantity--;
     emit(RestaurantAddonDecreaseQuantityState());
   }
 
   FutureOr<void> restaurantAddonPickToppingEvent(
       RestaurantAddonPickToppingEvent event,
       Emitter<RestaurantAddonState> emit) {
-    RestaurantData.food.availableAddons[event.index].like = event.like;
-    emit(RestaurantAddonPickToppingState());
+    addons[event.index].like = event.like;
+    emit(RestaurantAddonPickToppingState(addons: addons));
   }
 
   FutureOr<void> restaurantAddonNoteEvent(

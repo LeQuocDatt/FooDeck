@@ -21,7 +21,7 @@ class SearchPageBloc extends Bloc<SearchPageEvent, SearchPageState> {
     if (event.search.isEmpty) {
       filterItems = [];
     } else {
-      filterItems = RestaurantData.restaurant
+      filterItems = restaurants
           .where((element) => element.shopName
               .toLowerCase()
               .contains(event.search.toLowerCase()))
@@ -33,7 +33,7 @@ class SearchPageBloc extends Bloc<SearchPageEvent, SearchPageState> {
   FutureOr<void> searchPageNavigateToRestaurantPageEvent(
       SearchPageNavigateToRestaurantPageEvent event,
       Emitter<SearchPageState> emit) {
-    RestaurantData.restaurantModel = event.restaurantModel;
+    restaurantModel = event.restaurantModel;
     AppRouter.navigatorKey.currentState!.pushNamed(AppRouter.restaurantPage);
     emit(SearchPageNavigateToRestaurantPageState());
   }

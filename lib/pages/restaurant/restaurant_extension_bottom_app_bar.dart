@@ -5,9 +5,9 @@ class RestaurantBottomAppBar extends StatelessWidget {
 
   // phân loại tabs theo danh sách enum
   List<Tab> _buildCategoryTabs() {
-    return FoodCategory.values.map((category) {
+    return type.map((category) {
       return Tab(
-        text: category.toString().split('.').last,
+        text: category.split('.').last,
       );
     }).toList();
   }
@@ -42,37 +42,30 @@ class RestaurantBottomAppBar extends StatelessWidget {
                   buildWhen: (previous, current) =>
                       current is RestaurantPageLoadingSuccessState,
                   builder: (context, state) {
-                    switch (state.runtimeType) {
-                      case RestaurantPageLoadingSuccessState:
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
                           children: [
-                            Column(
-                              children: [
-                                const Icon(Icons.star_border),
-                                CustomText(
-                                    content: RestaurantData.restaurantModel.rate
-                                        .toString())
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                const Icon(Icons.access_time_outlined),
-                                CustomText(
-                                    content:
-                                        '${RestaurantData.restaurantModel.deliveryTime} mins')
-                              ],
-                            ),
-                            const Column(
-                              children: [
-                                Icon(Icons.location_on_outlined),
-                                CustomText(content: '1.4km')
-                              ],
-                            ),
+                            const Icon(Icons.star_border),
+                            CustomText(content: restaurantModel.rate.toString())
                           ],
-                        );
-                    }
-                    return const SizedBox.shrink();
+                        ),
+                        Column(
+                          children: [
+                            const Icon(Icons.access_time_outlined),
+                            CustomText(
+                                content: '${restaurantModel.deliveryTime} mins')
+                          ],
+                        ),
+                        const Column(
+                          children: [
+                            Icon(Icons.location_on_outlined),
+                            CustomText(content: '1.4km')
+                          ],
+                        ),
+                      ],
+                    );
                   },
                 ),
               ],

@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:template/main.dart';
-import 'package:template/values/images.dart';
 import 'package:template/widgets/map/dio_exception.dart';
 
 Dio _dio = Dio();
@@ -23,16 +21,6 @@ Future getCyclingRouteUsingMapbox(LatLng source, LatLng destination) async {
   }
 }
 
-LatLng getLatLngFromSharedPrefs() {
-  return LatLng(sharedPreferences.getDouble('latitude')!,
-      sharedPreferences.getDouble('longitude')!);
-}
-
-late MapboxMapController mapController;
-List responses = [];
-
-LatLng latLng = getLatLngFromSharedPrefs();
-
 Future<Map> getDirectionsAPIResponse(
     LatLng currentLatLng, LatLng endPoint) async {
   final response = await getCyclingRouteUsingMapbox(currentLatLng, endPoint);
@@ -45,16 +33,4 @@ Future<Map> getDirectionsAPIResponse(
     "distance": distance,
   };
   return modifiedResponse;
-}
-
-Future moveCamera(index) async {
-  await mapController.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: responses[index]['location'], zoom: 15)));
-  await mapController.addSymbol(
-    SymbolOptions(
-      geometry: responses[index]['location'],
-      iconSize: 2,
-      iconImage: Assets.marker,
-    ),
-  );
 }

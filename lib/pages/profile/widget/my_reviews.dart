@@ -53,20 +53,25 @@ class _MyReviewsState extends State<MyReviews> {
                                     Column(
                                       children: [
                                         BannerItems(
-                                            paddingImage: const EdgeInsets.only(
-                                                right: 10),
-                                            paddingText:
-                                                const EdgeInsets.only(left: 3),
-                                            foodImage: snapshot.data![index]
-                                                ['restaurant_image'],
-                                            deliveryTime:
-                                                '${snapshot.data![index]['time']} mins',
-                                            shopName: snapshot.data![index]
-                                                ['restaurant_name'],
-                                            shopAddress: snapshot.data![index]
-                                                ['place'],
-                                            rateStar: snapshot.data![index]
-                                                ['vote']),
+                                          paddingImage:
+                                              const EdgeInsets.only(right: 10),
+                                          paddingText:
+                                              const EdgeInsets.only(left: 3),
+                                          foodImage: snapshot.data![index]
+                                              ['restaurant_image'],
+                                          deliveryTime:
+                                              '${snapshot.data![index]['time']} mins',
+                                          shopName: snapshot.data![index]
+                                              ['restaurant_name'],
+                                          shopAddress: snapshot.data![index]
+                                              ['place'],
+                                          rateStar: snapshot.data![index]
+                                              ['vote'],
+                                          restaurantModel:
+                                              CommonUtils.sortRestaurant(
+                                                  restaurants,
+                                                  'explore')[index],
+                                        ),
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               top: 32, right: 23),

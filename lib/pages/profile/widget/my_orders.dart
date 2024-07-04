@@ -55,43 +55,49 @@ class _MyOrdersState extends State<MyOrders> {
                                     },
                                     controller: pageController,
                                     clipBehavior: Clip.none,
-                                    itemCount: CommonUtils.sortRestaurant(TitleFood.Recent, RestaurantData.restaurant)
+                                    itemCount: CommonUtils.sortRestaurant(
+                                            restaurants, 'explore')
                                         .length,
                                     scrollDirection: Axis.horizontal,
-                                    itemBuilder: (BuildContext context, int index) =>
+                                    itemBuilder: (BuildContext context,
+                                            int index) =>
                                         BannerItems(
-                                            heartIcon: const SizedBox(),
                                             badge: const SizedBox(),
                                             voteStar: const SizedBox(),
-                                            onTap: () {},
+                                            onTap: () {
+                                              explorePageBloc.add(
+                                                  ExplorePageLikeEvent(
+                                                      saveFood: CommonUtils
+                                                              .sortRestaurant(
+                                                                  restaurants,
+                                                                  'explore')[
+                                                          index]));
+                                            },
                                             paddingImage: const EdgeInsets.only(
                                                 right: 10),
                                             paddingText: const EdgeInsets.only(
                                                 left: 3, top: 8),
                                             foodImage: CommonUtils.sortRestaurant(
-                                                    TitleFood.Recent,
-                                                    RestaurantData
-                                                        .restaurant)[index]
+                                                    restaurants,
+                                                    'explore')[index]
                                                 .image,
                                             deliveryTime:
-                                                '${CommonUtils.sortRestaurant(TitleFood.Recent, RestaurantData.restaurant)[index].deliveryTime} mins',
+                                                '${CommonUtils.sortRestaurant(restaurants, 'explore')[index].deliveryTime} mins',
                                             shopName: CommonUtils.sortRestaurant(
-                                                    TitleFood.Recent,
-                                                    RestaurantData.restaurant)[index]
+                                                    restaurants, 'explore')[index]
                                                 .shopName,
-                                            shopAddress: CommonUtils.sortRestaurant(TitleFood.Recent, RestaurantData.restaurant)[index].address,
-                                            rateStar: '${CommonUtils.sortRestaurant(TitleFood.Recent, RestaurantData.restaurant)[index].rate}',
+                                            shopAddress: CommonUtils.sortRestaurant(restaurants, 'explore')[index].address,
+                                            rateStar: '${CommonUtils.sortRestaurant(restaurants, 'explore')[index].rate}',
                                             action: () {
                                               explorePageBloc.add(
                                                   ExplorePageLikeEvent(
                                                       saveFood: CommonUtils
                                                               .sortRestaurant(
-                                                                  TitleFood.Recent,
-                                                                  RestaurantData
-                                                                      .restaurant)[
+                                                                  restaurants,
+                                                                  'explore')[
                                                           index]));
                                             },
-                                            restaurantModel: CommonUtils.sortRestaurant(TitleFood.Recent, RestaurantData.restaurant)[index])),
+                                            restaurantModel: CommonUtils.sortRestaurant(restaurants, 'explore')[index])),
                               )),
                         )
                       ],

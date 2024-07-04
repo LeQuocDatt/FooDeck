@@ -38,7 +38,7 @@ class _RestaurantCartState extends State<RestaurantCart> {
                         current is RestaurantCartRemoveItemState,
                     builder: (context, state) {
                       return ListView.separated(
-                        itemCount: CartItemsListData.cartItems.length,
+                        itemCount: cartItems.length,
                         itemBuilder: (context, index) {
                           return ListTile(
                             contentPadding:
@@ -55,7 +55,7 @@ class _RestaurantCartState extends State<RestaurantCart> {
                                       backgroundColor: Colors.black,
                                       label: CustomText(
                                           content:
-                                              '${CartItemsListData.cartItems[index].quantity}',
+                                              '${cartItems[index].quantity}',
                                           fontSize: 12),
                                       child: Container(
                                           width: 80,
@@ -65,10 +65,8 @@ class _RestaurantCartState extends State<RestaurantCart> {
                                                   BorderRadius.circular(16),
                                               image: DecorationImage(
                                                   image: AssetImage(
-                                                      CartItemsListData
-                                                          .cartItems[index]
-                                                          .foodItems
-                                                          .picture),
+                                                      cartItems[index]
+                                                          .foodImage),
                                                   fit: BoxFit.cover))),
                                     ),
                                   ),
@@ -78,17 +76,14 @@ class _RestaurantCartState extends State<RestaurantCart> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         CustomText(
-                                            content: CartItemsListData
-                                                .cartItems[index]
-                                                .foodItems
-                                                .nameFood),
+                                            content: cartItems[index].foodName),
                                         Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
                                               CustomText(
-                                                  content: CartItemsListData
-                                                      .cartItems[index].size,
+                                                  content:
+                                                      cartItems[index].size,
                                                   fontSize: 15,
                                                   color: Colors.grey),
                                               Padding(
@@ -109,13 +104,13 @@ class _RestaurantCartState extends State<RestaurantCart> {
                                                       textOverflow:
                                                           TextOverflow.visible,
                                                       content:
-                                                          '${CartItemsListData.cartItems[index].selectAddon.join(' ')}${CartItemsListData.cartItems[index].note}',
+                                                          '${cartItems[index].selectAddon}${cartItems[index].note}',
                                                       fontSize: 15,
                                                       color: Colors.grey)),
                                             ]),
                                         CustomText(
                                             content:
-                                                '\$${CartItemsListData.cartItems[index].price}',
+                                                '\$${cartItems[index].price}',
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold)
                                       ],
@@ -125,8 +120,7 @@ class _RestaurantCartState extends State<RestaurantCart> {
                                       onPressed: () {
                                         restaurantCartBloc.add(
                                             RestaurantCartRemoveItemEvent(
-                                                cartItem: CartItemsListData
-                                                    .cartItems[index]));
+                                                cartItem: cartItems[index]));
                                       },
                                       icon: const Icon(Icons.dangerous,
                                           color: Colors.grey))
@@ -165,32 +159,34 @@ class _RestaurantCartState extends State<RestaurantCart> {
                               padding: const EdgeInsets.only(
                                   left: 20, right: 70, bottom: 24),
                               child: CustomSlidePage(
-                                itemCount: CommonUtils.sortFood(
-                                        FoodCategory.Beverages,
-                                        RestaurantData.foodItems)
-                                    .length,
-                                itemBuilder: (context, index) => BannerItems(
-                                    voteStar: const SizedBox(),
-                                    paddingImage:
-                                        const EdgeInsets.only(right: 30),
-                                    paddingText:
-                                        const EdgeInsets.only(left: 3, top: 8),
-                                    foodImage: CommonUtils.sortFood(
-                                            FoodCategory.Beverages,
-                                            RestaurantData.foodItems)[index]
-                                        .picture,
-                                    deliveryTime:
-                                        '\$${CommonUtils.sortFood(FoodCategory.Beverages, RestaurantData.foodItems)[index].price}',
-                                    shopName: CommonUtils.sortFood(
-                                            FoodCategory.Beverages,
-                                            RestaurantData.foodItems)[index]
-                                        .nameFood,
-                                    shopAddress: CommonUtils.sortFood(
-                                            FoodCategory.Beverages,
-                                            RestaurantData.foodItems)[index]
-                                        .place,
-                                    rateStar: ''),
-                              )),
+                                  itemCount:
+                                      CommonUtils.sortFood('Beverages', foods)
+                                          .length,
+                                  itemBuilder: (context, index) {
+                                    final food = CommonUtils.sortFood(
+                                        'Beverages', foods)[index];
+                                    return BannerItems(
+                                      onTap: () {
+                                        restaurantCartBloc.add(
+                                            RestaurantCartNavigateBackEvent(
+                                                foodModel: food));
+                                      },
+                                      heartIcon: const SizedBox.shrink(),
+                                      voteStar: const SizedBox.shrink(),
+                                      paddingImage:
+                                          const EdgeInsets.only(right: 30),
+                                      paddingText: const EdgeInsets.only(
+                                          left: 3, top: 8),
+                                      foodImage: food.foodImage,
+                                      deliveryTime: '\$${food.price}',
+                                      shopName: food.foodName,
+                                      shopAddress: restaurantModel.address,
+                                      rateStar: '',
+                                      restaurantModel:
+                                          CommonUtils.sortRestaurant(
+                                              restaurants, 'explore')[index],
+                                    );
+                                  })),
                         )
                       ],
                     ),
@@ -248,43 +244,41 @@ class _RestaurantCartState extends State<RestaurantCart> {
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
                           CustomText(
-                              content: '\$${restaurantCartBloc.totalPrice}',
+                              content: '\$$totalPrice',
                               fontWeight: FontWeight.bold,
                               color: AppColor.globalPink)
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30, bottom: 16),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 30, bottom: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const CustomText(content: 'Delivery Fee'),
-                            CustomText(
-                                content: '\$${restaurantCartBloc.deliveryFee}')
+                            CustomText(content: 'Delivery Fee'),
+                            CustomText(content: '\$$deliveryFee')
                           ],
                         ),
                       ),
                       Divider(color: Colors.grey[300]),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const CustomText(content: 'VAT'),
-                            CustomText(content: '\$${restaurantCartBloc.vat}')
+                            CustomText(content: 'VAT'),
+                            CustomText(content: '\$$vat')
                           ],
                         ),
                       ),
                       Divider(color: Colors.grey[300]),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const CustomText(content: 'Coupon'),
+                            CustomText(content: 'Coupon'),
                             CustomText(
-                                content: '-\$${restaurantCartBloc.coupon}',
-                                color: Colors.green)
+                                content: '-\$$coupon', color: Colors.green)
                           ],
                         ),
                       ),
@@ -298,7 +292,7 @@ class _RestaurantCartState extends State<RestaurantCart> {
                     children: [
                       Expanded(
                         child: CustomText(
-                            content: '\$${restaurantCartBloc.bill}',
+                            content: '\$$bill',
                             fontSize: 28,
                             fontWeight: FontWeight.bold),
                       ),

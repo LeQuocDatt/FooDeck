@@ -16,100 +16,60 @@ class PaymentMethodsBloc
 
   FutureOr<void> paymentMethodsInitialEvent(PaymentMethodsInitialEvent event,
       Emitter<PaymentMethodsState> emit) async {
-    final data = await supabase.from('card').select();
-    emit(PaymentMethodsLoadingState());
-    await Future.delayed(const Duration(milliseconds: 500));
-    emit(PaymentMethodsLoadedState(
-        paymentModel: data
-            .map((event) => PaymentModel(
-                cardName: event['card_name'],
-                cardNumber: event['card_number'],
-                expiryDate: event['expiry_date'],
-                cvc: event['cvc']))
-            .toList()));
+    emit(PaymentMethodsLoadedState());
   }
 
   FutureOr<void> paymentMethodsNavigateToCreateCardEvent(
       PaymentMethodsNavigateToCreateCardEvent event,
       Emitter<PaymentMethodsState> emit) async {
-    final data = await supabase.from('card').select();
     AppRouter.navigatorKey.currentState!.pushNamed(AppRouter.createCard);
     emit(PaymentMethodsNavigateToCreateCardState());
-    emit(PaymentMethodsLoadedState(
-        paymentModel: data
-            .map((event) => PaymentModel(
-                cardName: event['card_name'],
-                cardNumber: event['card_number'],
-                expiryDate: event['expiry_date'],
-                cvc: event['cvc']))
-            .toList()));
-  }
-
-  FutureOr<void> paymentMethodsRemoveCardEvent(
-      PaymentMethodsRemoveCardEvent event,
-      Emitter<PaymentMethodsState> emit) async {
-    await AsyncFunctions.deleteData(
-        'card',
-        {
-          'card_name': event.paymentModel.cardName,
-          'card_number': event.paymentModel.cardNumber
-        },
-        PopUp.allow,
-        event.context,
-        'You just removed a card');
-    final data = await supabase.from('card').select();
-    currentCard.value = data
-            .map((e) => PaymentModel(
-                cardName: e['card_name'],
-                cardNumber: e['card_number'],
-                expiryDate: e['expiry_date'],
-                cvc: e['cvc']))
-            .toList()
-            .length -
-        1;
-    emit(PaymentMethodsRemoveCardState());
-    emit(PaymentMethodsLoadedState(
-        paymentModel: data
-            .map((event) => PaymentModel(
-                cardName: event['card_name'],
-                cardNumber: event['card_number'],
-                expiryDate: event['expiry_date'],
-                cvc: event['cvc']))
-            .toList()));
   }
 
   FutureOr<void> paymentMethodsAddCardEvent(PaymentMethodsAddCardEvent event,
       Emitter<PaymentMethodsState> emit) async {
     FocusManager.instance.primaryFocus!.unfocus();
-    await AsyncFunctions.insertData(
-        'card',
-        {
-          'card_name': event.cardName,
-          'card_number': event.cardNumber,
-          'expiry_date': event.expiryDate,
-          'cvc': event.cvc,
-        },
-        PopUp.allow,
-        event.context,
-        'You just added a new card');
-    final data = await supabase.from('card').select();
-    currentCard.value = data
-            .map((e) => PaymentModel(
-                cardName: e['card_name'],
-                cardNumber: e['card_number'],
-                expiryDate: e['expiry_date'],
-                cvc: e['cvc']))
-            .toList()
-            .length -
-        1;
-    emit(PaymentMethodsAddCardState());
-    emit(PaymentMethodsLoadedState(
-        paymentModel: data
-            .map((event) => PaymentModel(
-                cardName: event['card_name'],
-                cardNumber: event['card_number'],
-                expiryDate: event['expiry_date'],
-                cvc: event['cvc']))
-            .toList()));
+    if (payments.length >= 2) {
+      customSnackBar(event.context, Toast.error, 'You can only have 2 cards');
+    } else {
+      if (!Validation.cardNameRegex.hasMatch(event.cardName) ||
+          event.cardNumber.length < 19 ||
+          event.expiryDate.isEmpty ||
+          event.cvc.length < 3) {
+        customSnackBar(
+            event.context, Toast.error, 'All info must correct and not empty');
+      } else {
+        if (payments.any((element) => element.cardNumber == event.cardNumber)) {
+          customSnackBar(
+              event.context, Toast.error, 'You already had this card');
+        } else {
+          await AsyncFunctions.insertData(
+              'card',
+              {
+                'card_name': event.cardName,
+                'card_number': event.cardNumber,
+                'expiry_date': event.expiryDate,
+                'cvc': event.cvc,
+                'user_id': user.id
+              },
+              PopUp.allow,
+              event.context,
+              'You just added a new card');
+          await AsyncFunctions.addCardDataToLocalStorage();
+          currentCard.value = payments.length - 1;
+          emit(PaymentMethodsAddCardState());
+        }
+      }
+    }
+  }
+
+  FutureOr<void> paymentMethodsRemoveCardEvent(
+      PaymentMethodsRemoveCardEvent event,
+      Emitter<PaymentMethodsState> emit) async {
+    await AsyncFunctions.deleteData('card', event.paymentModel.id, PopUp.allow,
+        event.context, 'You just removed a card');
+    payments.remove(event.paymentModel);
+    currentCard.value = payments.length - 1;
+    emit(PaymentMethodsRemoveCardState());
   }
 }

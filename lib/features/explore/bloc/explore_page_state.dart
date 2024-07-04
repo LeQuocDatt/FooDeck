@@ -8,12 +8,12 @@ final class ExplorePageInitial extends ExplorePageState {}
 
 class ExplorePageLoadingState extends ExplorePageState {}
 
-class ExplorePageErrorState extends ExplorePageState {}
-
 class ExplorePageLoadingSuccessState extends ExplorePageState {
-  final Map<String, dynamic> userModel;
+  final String? userAddress;
+  final List<RestaurantModel> restaurants;
 
-  ExplorePageLoadingSuccessState({required this.userModel});
+  ExplorePageLoadingSuccessState(
+      {required this.userAddress, required this.restaurants});
 }
 
 class ExplorePageLikeState extends ExplorePageActionState {

@@ -1,19 +1,7 @@
 import 'package:template/source/export.dart';
 
 class OrderSummary extends StatelessWidget {
-  const OrderSummary(
-      {super.key,
-      required this.res,
-      required this.subPrice,
-      required this.deliveryFee,
-      required this.vat,
-      required this.coupon});
-
-  final List res;
-  final int subPrice;
-  final int deliveryFee;
-  final int vat;
-  final int coupon;
+  const OrderSummary({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +15,10 @@ class OrderSummary extends StatelessWidget {
                 fontSize: 20,
                 fontWeight: FontWeight.bold)),
         SizedBox(
-          height: res.length * 80,
+          height: cartItems.length * 80,
           child: ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: res.length,
+            itemCount: cartItems.length,
             itemBuilder: (BuildContext context, int index) {
               return Column(
                 children: [
@@ -42,8 +30,8 @@ class OrderSummary extends StatelessWidget {
                       children: [
                         CustomText(
                             content:
-                                '${res[index].quantity}x ${res[index].foodItems.nameFood}'),
-                        CustomText(content: '\$${res[index].price}')
+                                '${cartItems[index].quantity}x ${cartItems[index].foodName}'),
+                        CustomText(content: '\$${cartItems[index].price}')
                       ],
                     ),
                   ),
@@ -64,39 +52,39 @@ class OrderSummary extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const CustomText(content: 'Subtotal'),
-                  CustomText(content: '\$$subPrice')
+                  CustomText(content: '\$$totalPrice')
                 ],
               ),
             ),
             Divider(color: Colors.grey[300]),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CustomText(content: 'Delivery Fee'),
+                  CustomText(content: 'Delivery Fee'),
                   CustomText(content: '\$$deliveryFee')
                 ],
               ),
             ),
             Divider(color: Colors.grey[300]),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CustomText(content: 'VAT'),
+                  CustomText(content: 'VAT'),
                   CustomText(content: '\$$vat')
                 ],
               ),
             ),
             Divider(color: Colors.grey[300]),
-            Padding(
-              padding: const EdgeInsets.only(top: 16, left: 24, right: 24),
+            const Padding(
+              padding: EdgeInsets.only(top: 16, left: 24, right: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CustomText(content: 'Coupon'),
+                  CustomText(content: 'Coupon'),
                   CustomText(content: '-\$$coupon', color: Colors.green)
                 ],
               ),

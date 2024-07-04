@@ -34,16 +34,15 @@ class Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(128, 24, 128, 40),
+    return Center(
       child: GestureDetector(
-          onTap: () => sharedPreferences.getBool('yes') != null
+          onTap: () => SharedPrefs.getBool(SharedPrefs.keyPhotoAccess) == true
               ? updatePicture()
               : showCupertinoModalPopup(
                   context: context,
                   builder: (context) => CupertinoAlertDialog(
                     title: const CustomText(
-                      content: 'Do you want to access to your photo library',
+                      content: 'Allow permission access to the photo library',
                       textOverflow: TextOverflow.visible,
                     ),
                     actions: [
@@ -51,7 +50,8 @@ class Avatar extends StatelessWidget {
                           onPressed: () {
                             updatePicture();
                             Navigator.pop(context);
-                            sharedPreferences.setBool('yes', true);
+                            SharedPrefs.setBool(
+                                SharedPrefs.keyPhotoAccess, true);
                           },
                           child: const CustomText(
                             content: 'Accept',

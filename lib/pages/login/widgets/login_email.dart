@@ -15,19 +15,14 @@ class _LoginEmailState extends State<LoginEmail> {
   final passwordController = TextEditingController();
 
   Future login() async {
-    if (Validation.emailRegex.hasMatch(emailController.text) &&
-        Validation.passRegex.hasMatch(passwordController.text)) {
-      try {
-        await supabase.auth.signInWithPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text.trim());
-      } catch (e) {
-        if (mounted) {
-          customSnackBar(context, Toast.error, e.toString());
-        }
+    try {
+      await supabase.auth.signInWithPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+    } catch (e) {
+      if (mounted) {
+        customSnackBar(context, Toast.error, 'Email or Password incorrect!');
       }
-    } else {
-      customSnackBar(context, Toast.error, 'Error!, please retry');
     }
   }
 

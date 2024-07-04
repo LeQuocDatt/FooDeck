@@ -4,10 +4,14 @@ sealed class RestaurantAddonEvent {}
 
 class RestaurantAddonInitialEvent extends RestaurantAddonEvent {}
 
-class RestaurantAddonLikeEvent extends RestaurantAddonEvent {}
+class RestaurantAddonLikeEvent extends RestaurantAddonEvent {
+  final FoodModel foodModel;
+
+  RestaurantAddonLikeEvent({required this.foodModel});
+}
 
 class RestaurantAddonPickSizeEvent extends RestaurantAddonEvent {
-  final RadioType turnOn;
+  final String turnOn;
   final int index;
 
   RestaurantAddonPickSizeEvent({required this.turnOn, required this.index});

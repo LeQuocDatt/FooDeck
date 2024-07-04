@@ -1,72 +1,62 @@
 class RestaurantModel {
-  final String image, shopName, address;
-  final num deliveryTime, rate;
-  final TitleFood titleFood;
-  final List<FoodItems> foodItems;
+  String image, shopName, address, type, id;
+  num deliveryTime, rate;
+  bool like;
 
   RestaurantModel(
-      {required this.image,
+      {required this.like,
+      required this.image,
       required this.deliveryTime,
       required this.shopName,
       required this.address,
       required this.rate,
-      required this.titleFood,
-      required this.foodItems});
+      required this.type,
+      required this.id});
 }
 
-enum TitleFood { Deals, Explore, Recent }
+List<RestaurantModel> restaurants = [];
+late RestaurantModel restaurantModel;
 
-class FoodItems {
-  final String picture, nameFood, detail, place;
+class FoodModel {
+  final String foodImage, foodName, detail, type;
+  final String? id, restaurantId;
   final int price;
-  final FoodCategory foodCategory;
-  int quantityFood;
-  List<Addon> availableAddons;
-
-  FoodItems(
-      {this.quantityFood = 1,
-      required this.place,
-      required this.picture,
-      required this.nameFood,
-      required this.detail,
-      required this.price,
-      required this.foodCategory,
-      required this.availableAddons});
-}
-
-enum FoodCategory { Popular, Deals, Wraps, Beverages, Sandwiches }
-
-class Addon {
-  final String addonName, size;
-  final int priceSize, price;
   bool like;
-  RadioType radio;
 
-  Addon(
-      {this.like = false,
-      required this.radio,
-      required this.addonName,
-      required this.size,
-      required this.priceSize,
+  FoodModel(
+      {required this.like,
+      required this.foodImage,
+      required this.foodName,
+      required this.detail,
+      required this.type,
+      this.id,
+      this.restaurantId,
       required this.price});
 }
 
-enum RadioType { a, b, c }
+List<FoodModel> foods = [];
+late FoodModel foodModel;
 
-class CartItems {
-  CartItems(
-      {required this.foodItems,
+List<String> type = ['Popular', 'Deals', 'Wraps', 'Beverages', 'Sandwiches'];
+
+class AddonModel {
+  final String addonName, size, type;
+  final String? id, foodId;
+  final int sizePrice, addonPrice;
+  bool like;
+
+  AddonModel(
+      {this.id,
+      this.foodId,
+      required this.type,
+      required this.like,
+      required this.addonName,
       required this.size,
-      required this.price,
-      required this.selectAddon,
-      required this.note,
-      this.quantity = 1});
-
-  final FoodItems foodItems;
-  final String size, note;
-  final List<String> selectAddon;
-  int price, quantity;
+      required this.sizePrice,
+      required this.addonPrice});
 }
+
+List<AddonModel> addons = [];
 
 class OrderHistory {
   final String restaurantName, date;

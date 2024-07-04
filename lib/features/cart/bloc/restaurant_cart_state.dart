@@ -12,4 +12,6 @@ class RestaurantCartLoadedState extends RestaurantCartState {}
 
 class RestaurantCartRemoveItemState extends RestaurantCartState {}
 
+class RestaurantCartNavigateBackState extends RestaurantCartActionState {}
+
 class RestaurantCartNavigateToCheckOutState extends RestaurantCartActionState {}

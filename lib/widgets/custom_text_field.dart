@@ -69,10 +69,7 @@ class CustomTextField extends StatelessWidget {
                         ]
                       : null,
                   border: activeValidate == true
-                      ? Border.all(
-                          color: activeValidate == true
-                              ? borderColor ?? Colors.red
-                              : Colors.grey.shade300)
+                      ? Border.all(color: borderColor ?? Colors.red)
                       : null,
                   borderRadius: BorderRadius.circular(borderRadius ?? 16)),
               child: Row(
@@ -83,7 +80,6 @@ class CustomTextField extends StatelessWidget {
                   ),
                   Expanded(
                       child: TextFormField(
-                          maxLines: maxLines,
                           onTap: onTap,
                           textInputAction:
                               textInputAction ?? TextInputAction.next,
@@ -107,7 +103,7 @@ class CustomTextField extends StatelessWidget {
                               floatingLabelStyle: AppTextStyle.inter.copyWith(
                                   color: activeValidate == true
                                       ? floatingLabelColor ?? Colors.red
-                                      : Colors.grey.shade400),
+                                      : Colors.black),
                               border: InputBorder.none))),
                   Padding(
                     padding: const EdgeInsets.only(right: 15),

@@ -18,10 +18,10 @@ class RestaurantPageBloc
     on<RestaurantPageNavigateToAddonEvent>(restaurantPageNavigateToAddonEvent);
   }
 
-  FutureOr<void> restaurantPageInitialEvent(
-      RestaurantPageInitialEvent event, Emitter<RestaurantPageState> emit) {
+  FutureOr<void> restaurantPageInitialEvent(RestaurantPageInitialEvent event,
+      Emitter<RestaurantPageState> emit) async {
     emit(RestaurantPageLoadingState());
-    emit(RestaurantPageLoadingSuccessState());
+    emit(RestaurantPageLoadingSuccessState(foods: foods));
   }
 
   FutureOr<void> restaurantPageShareEvent(
@@ -49,7 +49,7 @@ class RestaurantPageBloc
 
   FutureOr<void> restaurantPageSentReviewEvent(
       RestaurantPageSentReviewEvent event, Emitter<RestaurantPageState> emit) {
-    CommonUtils.sendReview(event.context, review, event.restaurant, rate);
+    CommonUtils.sendReview(event.context, review, rate);
     emit(RestaurantPageSentReviewState());
   }
 
@@ -61,8 +61,9 @@ class RestaurantPageBloc
 
   FutureOr<void> restaurantPageNavigateToAddonEvent(
       RestaurantPageNavigateToAddonEvent event,
-      Emitter<RestaurantPageState> emit) {
-    RestaurantData.food = event.foodItems;
+      Emitter<RestaurantPageState> emit) async {
+    foodModel = event.foodItems;
+    await AsyncFunctions.addAddonDataToLocalStorage();
     AppRouter.navigatorKey.currentState!.pushNamed(AppRouter.restaurantAddon);
     emit(RestaurantPageNavigateToAddonState());
   }

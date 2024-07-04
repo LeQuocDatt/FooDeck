@@ -15,7 +15,7 @@ Column avatarAndName(String? avatar, String? name) {
     children: [
       avatar != null
           ? CachedNetworkImage(
-              errorWidget: (context, url, error) => Container(
+              errorWidget: (_, __, ___) => Container(
                   alignment: Alignment.center,
                   width: 88,
                   height: 88,
@@ -23,7 +23,7 @@ Column avatarAndName(String? avatar, String? name) {
                       shape: BoxShape.circle, color: Colors.grey[400]),
                   child:
                       const Icon(Icons.person, color: Colors.white, size: 80)),
-              placeholder: (context, url) => Container(
+              placeholder: (_, __) => Container(
                     width: 88,
                     height: 88,
                     decoration: BoxDecoration(
@@ -32,7 +32,7 @@ Column avatarAndName(String? avatar, String? name) {
                         color: AppColor.globalPink),
                   ),
               imageUrl: avatar,
-              imageBuilder: (context, imageProvider) => Container(
+              imageBuilder: (_, imageProvider) => Container(
                     height: 88,
                     width: 88,
                     decoration: BoxDecoration(
@@ -43,8 +43,10 @@ Column avatarAndName(String? avatar, String? name) {
           : nullAvatar(),
       Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 4),
-        child: CustomText(
-            content: name ?? '', fontSize: 20, fontWeight: FontWeight.w700),
+        child: name != null
+            ? CustomText(
+                content: name, fontSize: 20, fontWeight: FontWeight.w700)
+            : const SizedBox.shrink(),
       )
     ],
   );

@@ -25,13 +25,13 @@ class _CreateAccountState extends State<CreateAccount> {
           Validation.passRegex.hasMatch(passwordController.text)) {
         await supabase.auth.signUp(
             email: emailController.text.trim(),
-            password: passwordController.text.trim());
-        await supabase.from('users').insert({
-          'email': emailController.text.trim(),
-          'full_name': nameController.text.trim(),
-          'phone': phoneController.text.trim(),
-          'password': passwordController.text.trim(),
-        });
+            password: passwordController.text.trim(),
+            data: {
+              'email': emailController.text.trim(),
+              'full_name': nameController.text.trim(),
+              'phone': phoneController.text.trim(),
+              'password': passwordController.text.trim(),
+            });
         if (mounted) {
           Navigator.pushNamed(context, AppRouter.otp,
               arguments: Otp(email: emailController.text.trim()));

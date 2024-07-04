@@ -12,8 +12,12 @@ class Otp extends StatefulWidget {
 class _OtpState extends State<Otp> {
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 500),
-        () => customSnackBar(context, Toast.error, 'OTP in your email'));
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        customSnackBar(context, Toast.error, 'OTP in your email', 2000);
+      }
+    });
+
     super.initState();
   }
 
@@ -36,10 +40,13 @@ class _OtpState extends State<Otp> {
 
   Future resendOTP() async {
     try {
-      await supabase.auth
-          .signInWithOtp(shouldCreateUser: false, email: widget.email)
-          .then((value) =>
-              customSnackBar(context, Toast.error, 'OTP in your email'));
+      await supabase.auth.resend(email: widget.email, type: OtpType.email).then(
+        (value) {
+          if (mounted) {
+            customSnackBar(context, Toast.error, 'OTP in your email');
+          }
+        },
+      );
     } catch (e) {
       if (mounted) {
         customSnackBar(context, Toast.error, e.toString());
@@ -60,8 +67,7 @@ class _OtpState extends State<Otp> {
                         BorderSide(width: 8, color: AppColor.dividerGrey)),
                 title: const CustomText(
                     content: 'OTP', fontWeight: FontWeight.bold)),
-            body: SingleChildScrollView(
-                child: Center(
+            body: Center(
               child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
@@ -70,10 +76,11 @@ class _OtpState extends State<Otp> {
                         CustomText(
                             content:
                                 'Confirm the code we sent to ${widget.email}',
+                            textOverflow: TextOverflow.visible,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                         Padding(
-                          padding: const EdgeInsets.only(top: 16),
+                          padding: const EdgeInsets.only(top: 30),
                           child: ValueListenableBuilder(
                             valueListenable: currentIndex,
                             builder: (BuildContext context, int value,
@@ -83,54 +90,15 @@ class _OtpState extends State<Otp> {
                                     MainAxisAlignment.spaceBetween,
                                 children: List.generate(
                                   6,
-                                  (index) => Flexible(
-                                    child: SizedBox(
-                                      width: 60,
-                                      child: CustomTextField(
-                                        autofocus: true,
-                                        textInputAction: TextInputAction.next,
-                                        textAlign: TextAlign.center,
-                                        keyboardType: TextInputType.number,
-                                        activeValidate: true,
-                                        borderColor: value >= index
-                                            ? AppColor.globalPink
-                                            : Colors.grey,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                          LengthLimitingTextInputFormatter(1)
-                                        ],
-                                        onChanged: (value) {
-                                          otpValues[index] = value;
-
-                                          if (value.length == 1) {
-                                            setState(() {
-                                              currentIndex.value = index + 1;
-                                            });
-                                            currentIndex.value == 6
-                                                ? null
-                                                : FocusScope.of(context)
-                                                    .nextFocus();
-                                          } else {
-                                            setState(() {
-                                              currentIndex.value = index - 1;
-                                            });
-                                            currentIndex.value == -1
-                                                ? null
-                                                : FocusScope.of(context)
-                                                    .previousFocus();
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
+                                  (index) => SizedBox(
+                                      width: 50, child: buildOtpField(index)),
                                 ),
                               );
                             },
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(bottom: 40),
+                            padding: const EdgeInsets.symmetric(vertical: 40),
                             child: GestureDetector(
                                 onTap: () {
                                   resendOTP();
@@ -152,6 +120,55 @@ class _OtpState extends State<Otp> {
                           },
                         )
                       ])),
-            ))));
+            )));
+  }
+
+  Widget buildOtpField(int index) {
+    return TextField(
+      autofocus: true,
+      textInputAction: TextInputAction.next,
+      textAlign: TextAlign.center,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                  color: currentIndex.value >= index
+                      ? AppColor.globalPink
+                      : Colors.grey)),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                  color: currentIndex.value >= index
+                      ? AppColor.globalPink
+                      : Colors.grey)),
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                  color: currentIndex.value >= index
+                      ? AppColor.globalPink
+                      : Colors.grey))),
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(1)
+      ],
+      onChanged: (value) {
+        otpValues[index] = value;
+
+        if (value.length == 1) {
+          setState(() {
+            currentIndex.value = index + 1;
+          });
+          currentIndex.value == 6 ? null : FocusScope.of(context).nextFocus();
+        } else {
+          setState(() {
+            currentIndex.value = index - 1;
+          });
+          currentIndex.value == -1
+              ? null
+              : FocusScope.of(context).previousFocus();
+        }
+      },
+    );
   }
 }

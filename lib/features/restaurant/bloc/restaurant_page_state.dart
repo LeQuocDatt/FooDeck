@@ -8,7 +8,11 @@ final class RestaurantPageInitial extends RestaurantPageState {}
 
 class RestaurantPageLoadingState extends RestaurantPageState {}
 
-class RestaurantPageLoadingSuccessState extends RestaurantPageState {}
+class RestaurantPageLoadingSuccessState extends RestaurantPageState {
+  final List<FoodModel> foods;
+
+  RestaurantPageLoadingSuccessState({required this.foods});
+}
 
 class RestaurantPageShareState extends RestaurantPageActionState {}
 

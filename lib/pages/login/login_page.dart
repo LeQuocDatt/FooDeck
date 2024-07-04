@@ -18,13 +18,14 @@ class _LoginPageState extends State<LoginPage> {
     /// TODO: update the iOS client ID with your own.
     ///
     /// iOS Client ID that you registered with Google Cloud.
-    // const iosClientId = 'my-ios.apps.googleusercontent.com';
+    const iosClientId =
+        '5627539322-05rpp0njkdihnptgpgqm4gm7dt66mcok.apps.googleusercontent.com';
 
     // Google sign in on Android will work without providing the Android
     // Client ID registered on Google Cloud.
 
     final GoogleSignIn googleSignIn = GoogleSignIn(
-      // clientId: iosClientId,
+      clientId: iosClientId,
       serverClientId: webClientId,
     );
     final googleUser = await googleSignIn.signIn();
@@ -67,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
         facebookSignIn();
         break;
       case 'Login via Apple':
-        customSnackBar(context,Toast.error, 'Updating...');
+        customSnackBar(context, Toast.error, 'Updating...');
         break;
     }
   }

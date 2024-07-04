@@ -52,14 +52,17 @@ class _OrderCompleteState extends State<OrderComplete> {
                   height: 250,
                   child: Lottie.asset(Assets.delivery, fit: BoxFit.cover)),
             ),
-            CustomButton(
-                onPressed: () {
-                  timer.cancel();
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, AppRouter.homePage, (route) => false);
-                },
-                content: 'Go Home',
-                color: AppColor.globalPink)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: CustomButton(
+                  onPressed: () {
+                    timer.cancel();
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, AppRouter.homePage, (route) => false);
+                  },
+                  content: 'Go Home',
+                  color: AppColor.globalPink),
+            )
           ],
         ),
       ),

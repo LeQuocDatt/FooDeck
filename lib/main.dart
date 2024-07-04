@@ -1,10 +1,8 @@
 import 'package:template/source/export.dart';
 
-late SharedPreferences sharedPreferences;
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  sharedPreferences = await SharedPreferences.getInstance();
+  SharedPrefs.sharedPreferences = await SharedPreferences.getInstance();
   await dotenv.load(fileName: '.env');
   await Supabase.initialize(
       url: dotenv.env['URL'].toString(),
@@ -32,57 +30,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider(
-          create: (context) => UserRepository(userProvider: UserProvider()),
-        )
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<SearchPageBloc>(
-            create: (context) => SearchPageBloc(),
-          ),
-          BlocProvider<ProfilePageBloc>(
-            create: (context) =>
-                ProfilePageBloc(context.read<UserRepository>()),
-          ),
-          BlocProvider<CreateCardBloc>(
-            create: (context) => CreateCardBloc(),
-          ),
-          BlocProvider<PaymentMethodsBloc>(
-            create: (context) => PaymentMethodsBloc(),
-          ),
-          BlocProvider<RestaurantCheckOutBloc>(
-            create: (context) => RestaurantCheckOutBloc(),
-          ),
-          BlocProvider<RestaurantAddonBloc>(
-            create: (context) => RestaurantAddonBloc(),
-          ),
-          BlocProvider<RestaurantCartBloc>(
-            create: (context) => RestaurantCartBloc(),
-          ),
-          BlocProvider(
-            create: (context) => RestaurantPageBloc(),
-          ),
-          BlocProvider(
-            create: (context) =>
-                ExplorePageBloc(context.read<UserRepository>()),
-          ),
-          BlocProvider(
-            create: (context) => HomePageBloc(),
-          ),
-          BlocProvider(
-            create: (context) => SplashPageBloc(),
-          ),
-        ],
-        child: MaterialApp(
-            navigatorKey: AppRouter.navigatorKey,
-            theme: ThemeProvider.themeData,
-            debugShowCheckedModeBanner: false,
-            initialRoute: AppRouter.splashPage,
-            onGenerateRoute: AppRouter.routes),
-      ),
+    return MultiBlocProvider(
+      providers: AppBlocProviders.allBlocProviders(),
+      child: MaterialApp(
+          navigatorKey: AppRouter.navigatorKey,
+          theme: ThemeProvider.themeData,
+          debugShowCheckedModeBanner: false,
+          initialRoute: AppRouter.splashPage,
+          onGenerateRoute: AppRouter.routes),
     );
   }
 }

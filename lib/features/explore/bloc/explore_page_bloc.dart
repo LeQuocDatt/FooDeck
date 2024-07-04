@@ -4,8 +4,7 @@ part 'explore_page_event.dart';
 part 'explore_page_state.dart';
 
 class ExplorePageBloc extends Bloc<ExplorePageEvent, ExplorePageState> {
-  final UserRepository userRepository;
-  ExplorePageBloc(this.userRepository) : super(ExplorePageInitial()) {
+  ExplorePageBloc() : super(ExplorePageInitial()) {
     on<ExplorePageInitialEvent>(explorePageInitialEvent);
     on<ExplorePageSearchNavigateEvent>(explorePageSearchNavigateEvent);
     on<ExplorePageNavigateEvent>(explorePageNavigateEvent);
@@ -15,13 +14,8 @@ class ExplorePageBloc extends Bloc<ExplorePageEvent, ExplorePageState> {
 
   FutureOr<void> explorePageInitialEvent(
       ExplorePageInitialEvent event, Emitter<ExplorePageState> emit) async {
-    emit(ExplorePageLoadingState());
-    try {
-      final user = await userRepository.getUser();
-      emit(ExplorePageLoadingSuccessState(userModel: user));
-    } catch (e) {
-      emit(ExplorePageErrorState());
-    }
+    emit(ExplorePageLoadingSuccessState(
+        restaurants: restaurants, userAddress: currentUser?.address));
   }
 
   FutureOr<void> explorePageSearchNavigateEvent(
@@ -31,10 +25,9 @@ class ExplorePageBloc extends Bloc<ExplorePageEvent, ExplorePageState> {
   }
 
   FutureOr<void> explorePageNavigateEvent(
-      ExplorePageNavigateEvent event, Emitter<ExplorePageState> emit) {
-    sharedPreferences.setString(
-        'restaurantName', event.restaurantModel.shopName);
-    RestaurantData.restaurantModel = event.restaurantModel;
+      ExplorePageNavigateEvent event, Emitter<ExplorePageState> emit) async {
+    restaurantModel = event.restaurantModel;
+    await AsyncFunctions.addFoodDataToLocalStorage();
     AppRouter.navigatorKey.currentState!.pushNamed(AppRouter.restaurantPage);
     emit(ExplorePageNavigateActionState());
   }
@@ -46,8 +39,8 @@ class ExplorePageBloc extends Bloc<ExplorePageEvent, ExplorePageState> {
   }
 
   FutureOr<void> explorePageLikeEvent(
-      ExplorePageLikeEvent event, Emitter<ExplorePageState> emit) {
-    emit(ExplorePageLikeState(restaurantModel: event.saveFood));
+      ExplorePageLikeEvent event, Emitter<ExplorePageState> emit) async {
     CommonUtils.toggleSave(event);
+    emit(ExplorePageLikeState(restaurantModel: event.saveFood));
   }
 }

@@ -37,8 +37,7 @@ class RestaurantAddonAppBar extends SliverPersistentHeaderDelegate {
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage(RestaurantData.food.picture),
-                  fit: BoxFit.cover)),
+                  image: AssetImage(foodModel.foodImage), fit: BoxFit.cover)),
           child: Padding(
             padding: EdgeInsets.only(left: move(offset), bottom: 10),
             child: Column(
@@ -46,12 +45,12 @@ class RestaurantAddonAppBar extends SliverPersistentHeaderDelegate {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                      content: RestaurantData.food.nameFood,
+                      content: foodModel.foodName,
                       fontSize: 22,
                       color: Colors.white,
                       fontWeight: FontWeight.bold),
                   CustomText(
-                      content: RestaurantData.food.place,
+                      content: restaurantModel.address,
                       color: Colors.white,
                       fontSize: 15)
                 ]),

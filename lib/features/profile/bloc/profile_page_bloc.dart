@@ -4,14 +4,13 @@ part 'profile_page_event.dart';
 part 'profile_page_state.dart';
 
 class ProfilePageBloc extends Bloc<ProfilePageEvent, ProfilePageState> {
-  final UserRepository userRepository;
   bool toggle = false;
   String imageUrl = '';
   String name = '';
   String email = '';
   String phone = '';
   String pass = '';
-  ProfilePageBloc(this.userRepository) : super(ProfilePageInitial()) {
+  ProfilePageBloc() : super(ProfilePageInitial()) {
     on<ProfilePageInitialEvent>(profilePageInitialEvent);
     on<ProfilePageNavigateEvent>(profilePageNavigateEvent);
     on<ProfilePageUpdatePictureEvent>(profilePageUpdatePictureEvent);
@@ -25,8 +24,15 @@ class ProfilePageBloc extends Bloc<ProfilePageEvent, ProfilePageState> {
 
   FutureOr<void> profilePageInitialEvent(
       ProfilePageInitialEvent event, Emitter<ProfilePageState> emit) async {
-    final user = await userRepository.getUser();
-    emit(ProfilePageLoadedState(userModel: user));
+    imageUrl = '';
+    name = '';
+    email = '';
+    phone = '';
+    pass = '';
+    emit(ProfilePageLoadedState(
+        avatar: currentUser?.avatar,
+        name: currentUser?.name,
+        address: currentUser?.address));
   }
 
   FutureOr<void> profilePageNavigateEvent(
@@ -74,8 +80,8 @@ class ProfilePageBloc extends Bloc<ProfilePageEvent, ProfilePageState> {
 
   FutureOr<void> profilePageUpdateInfoEvent(
       ProfilePageUpdateInfoEvent event, Emitter<ProfilePageState> emit) async {
-    CommonUtils.validateInfoBeforeUpdate(event);
-    final user = await userRepository.getUser();
-    emit(ProfilePageUpdateInfoState(userModel: user));
+    await CommonUtils.validateInfoBeforeUpdate(event);
+    emit(ProfilePageUpdateInfoState(
+        avatar: currentUser?.avatar, name: currentUser?.name));
   }
 }

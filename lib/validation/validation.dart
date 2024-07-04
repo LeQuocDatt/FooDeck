@@ -7,7 +7,9 @@ class Validation {
       r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
   static RegExp passRegex = RegExp(
       r'^(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$');
-  static RegExp cardNameRegex = RegExp(r'^([\w]+\s[\w]+\s?[\w]+?\S)$');
+  static RegExp cardNameRegex = RegExp(r'^(\w+\s\w+\s?\w+?\S)$');
+  static RegExp phoneRegex = RegExp(
+      r'^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$');
 }
 
 class CardNumberFormatter extends TextInputFormatter {

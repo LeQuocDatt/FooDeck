@@ -49,16 +49,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                       final success =
                                           state as ProfilePageLoadedState;
                                       return avatarAndName(
-                                          success.userModel['avatar_url'],
-                                          success.userModel['full_name']);
+                                          success.avatar, success.name);
                                     case ProfilePageUpdateInfoState:
                                       final success =
                                           state as ProfilePageUpdateInfoState;
                                       return avatarAndName(
-                                          success.userModel['avatar_url'],
-                                          success.userModel['full_name']);
+                                          success.avatar, success.name);
                                   }
-                                  return nullAvatar();
+                                  return const SizedBox.shrink();
                                 },
                               ),
                             ),
@@ -72,14 +70,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                     case ProfilePageLoadedState:
                                       final success =
                                           state as ProfilePageLoadedState;
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 40),
-                                        child: CustomText(
-                                            content:
-                                                success.userModel['address'] ??
-                                                    ''),
-                                      );
+                                      return success.address != null
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 40),
+                                              child: CustomText(
+                                                  content: success.address!),
+                                            )
+                                          : const SizedBox.shrink();
                                   }
                                   return const SizedBox.shrink();
                                 },

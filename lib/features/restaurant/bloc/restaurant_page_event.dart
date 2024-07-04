@@ -31,7 +31,7 @@ class RestaurantPageSentReviewEvent extends RestaurantPageEvent {
 class RestaurantPageMapEvent extends RestaurantPageEvent {}
 
 class RestaurantPageNavigateToAddonEvent extends RestaurantPageEvent {
-  final FoodItems foodItems;
+  final FoodModel foodItems;
 
   RestaurantPageNavigateToAddonEvent({required this.foodItems});
 }

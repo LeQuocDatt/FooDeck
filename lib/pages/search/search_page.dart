@@ -18,6 +18,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     final searchPageBloc = context.read<SearchPageBloc>();
+    final explorePageBloc = context.read<ExplorePageBloc>();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -52,6 +53,10 @@ class _SearchPageState extends State<SearchPage> {
                         clipBehavior: Clip.none,
                         itemCount: success.filterItems.length,
                         itemBuilder: (context, index) => BannerItems(
+                          action: () {
+                            explorePageBloc.add(ExplorePageLikeEvent(
+                                saveFood: success.filterItems[index]));
+                          },
                           onTap: () {
                             FocusManager.instance.primaryFocus?.unfocus();
                             searchPageBloc.add(
@@ -66,6 +71,7 @@ class _SearchPageState extends State<SearchPage> {
                           shopAddress: success.filterItems[index].address,
                           rateStar: '${success.filterItems[index].rate}',
                           badge: const SizedBox(),
+                          restaurantModel: success.filterItems[index],
                         ),
                         separatorBuilder: (BuildContext context, int index) {
                           return const Padding(

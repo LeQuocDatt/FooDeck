@@ -9,10 +9,6 @@ class CreateCard extends StatefulWidget {
 }
 
 class _CreateCardState extends State<CreateCard> {
-  final cardNameController = TextEditingController();
-  final cardNumberController = TextEditingController();
-  final expiryDateController = TextEditingController();
-  final cvcController = TextEditingController();
   @override
   void initState() {
     context.read<CreateCardBloc>().add(CreateCardInitialEvent());
@@ -39,135 +35,216 @@ class _CreateCardState extends State<CreateCard> {
             child: Center(
                 child: Column(
               children: [
-                CustomTextField(
-                    labelText: 'Card Name',
-                    keyboardType: TextInputType.name,
-                    controller: cardNameController,
-                    prefix: const Icon(Icons.person_2_outlined),
-                    textCapitalization: TextCapitalization.characters,
-                    onChanged: (p0) {
-                      setState(() {
-                        Validation.cardNameRegex
-                            .hasMatch(cardNameController.text);
-                      });
-                    },
-                    activeValidate: Validation.cardNameRegex
-                                .hasMatch(cardNameController.text) ||
-                            cardNameController.text.isEmpty
-                        ? false
-                        : true,
-                    errorText: Validation.cardNameRegex
-                                .hasMatch(cardNameController.text) ||
-                            cardNameController.text.isEmpty
-                        ? ''
-                        : 'Invalid Name'),
+                BlocBuilder<CreateCardBloc, CreateCardState>(
+                  buildWhen: (previous, current) =>
+                      current is CreateCardNameInputState,
+                  builder: (context, state) {
+                    switch (state.runtimeType) {
+                      case CreateCardNameInputState:
+                        final success = state as CreateCardNameInputState;
+                        return CustomTextField(
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(14)
+                            ],
+                            labelText: 'Card Name',
+                            keyboardType: TextInputType.name,
+                            prefix: Icon(Icons.person_2_outlined,
+                                color: Validation.cardNameRegex
+                                            .hasMatch(success.name) ||
+                                        success.name.isEmpty
+                                    ? Colors.black
+                                    : Colors.red),
+                            textCapitalization: TextCapitalization.characters,
+                            onChanged: (value) {
+                              createCardBloc
+                                  .add(CreateCardNameInputEvent(name: value));
+                            },
+                            activeValidate: Validation.cardNameRegex
+                                        .hasMatch(success.name) ||
+                                    success.name.isEmpty
+                                ? false
+                                : true,
+                            errorText: Validation.cardNameRegex
+                                        .hasMatch(success.name) ||
+                                    success.name.isEmpty
+                                ? ''
+                                : '${success.name} is not a valid name');
+                    }
+                    return CustomTextField(
+                        labelText: 'Card Name',
+                        keyboardType: TextInputType.name,
+                        prefix: const Icon(Icons.person_2_outlined),
+                        textCapitalization: TextCapitalization.characters,
+                        onChanged: (value) {
+                          createCardBloc
+                              .add(CreateCardNameInputEvent(name: value));
+                        },
+                        activeValidate: false);
+                  },
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: CustomTextField(
-                    labelText: 'Card Number',
-                    controller: cardNumberController,
-                    prefix: const Icon(Icons.credit_card),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(16),
-                      CardNumberFormatter(textIndex: 4, replaceText: ' ')
-                    ],
-                    errorText: cardNumberController.text.length < 19 &&
-                            cardNumberController.text.isNotEmpty
-                        ? 'Must be 16 digits'
-                        : '',
-                    onChanged: (value) {
-                      createCardBloc
-                          .add(CreateCardChangeTypeCardEvent(typeCard: value));
-                      setState(() {
-                        cardNumberController.text = value;
-                      });
-                    },
-                    activeValidate: cardNumberController.text.length < 19 &&
-                            cardNumberController.text.isNotEmpty
-                        ? true
-                        : false,
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: BlocBuilder<CreateCardBloc, CreateCardState>(
-                        builder: (context, state) {
-                          switch (state.runtimeType) {
-                            case CreateCardChangeTypeCardState:
-                              final success =
-                                  state as CreateCardChangeTypeCardState;
-                              return Container(
+                  child: BlocBuilder<CreateCardBloc, CreateCardState>(
+                    buildWhen: (previous, current) =>
+                        current is CreateCardNumberInputState,
+                    builder: (context, state) {
+                      switch (state.runtimeType) {
+                        case CreateCardNumberInputState:
+                          final success = state as CreateCardNumberInputState;
+                          return CustomTextField(
+                            labelText: 'Card Number',
+                            prefix: Icon(Icons.credit_card,
+                                color: success.number.length < 19 &&
+                                        success.number.isNotEmpty
+                                    ? Colors.red
+                                    : Colors.black),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(16),
+                              CardNumberFormatter(
+                                  textIndex: 4, replaceText: ' ')
+                            ],
+                            errorText: success.number.length < 19 &&
+                                    success.number.isNotEmpty
+                                ? 'Must be 16 digits'
+                                : '',
+                            onChanged: (value) {
+                              createCardBloc.add(
+                                  CreateCardNumberInputEvent(number: value));
+                            },
+                            activeValidate: success.number.length < 19 &&
+                                    success.number.isNotEmpty
+                                ? true
+                                : false,
+                            suffix: Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: Container(
                                   height: 56,
                                   width: 56,
                                   decoration: BoxDecoration(
-                                      image: success.typeCard.isEmpty
+                                      image: success.number.isEmpty
                                           ? null
                                           : DecorationImage(
-                                              image: AssetImage(success.typeCard
-                                                      .startsWith('4')
-                                                  ? Assets.visa
-                                                  : Assets.master),
-                                              fit: BoxFit.cover)));
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                    ),
+                                              image: AssetImage(
+                                                  success.number.startsWith('4')
+                                                      ? Assets.visa
+                                                      : Assets.master),
+                                              fit: BoxFit.cover))),
+                            ),
+                          );
+                      }
+                      return CustomTextField(
+                          labelText: 'Card Number',
+                          prefix: const Icon(Icons.credit_card),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            createCardBloc
+                                .add(CreateCardNumberInputEvent(number: value));
+                          },
+                          activeValidate: false);
+                    },
                   ),
                 ),
-                CustomTextField(
-                  onTap: () async {
-                    DateTime? dateTime = await showDatePicker(
-                        context: context,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100));
-                    if (dateTime != null) {
-                      setState(() {
-                        expiryDateController.text =
-                            DateFormat('MM/yy').format(dateTime);
-                      });
+                BlocBuilder<CreateCardBloc, CreateCardState>(
+                  buildWhen: (previous, current) =>
+                      current is CreateCardExpiryInputState,
+                  builder: (context, state) {
+                    switch (state.runtimeType) {
+                      case CreateCardExpiryInputState:
+                        final success = state as CreateCardExpiryInputState;
+                        TextEditingController expiryDateController =
+                            TextEditingController(text: success.expiryDate);
+                        return CustomTextField(
+                          onTap: () async {
+                            DateTime? dateTime = await showDatePicker(
+                                context: context,
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2100));
+                            if (dateTime != null) {
+                              createCardBloc.add(CreateCardExpiryInputEvent(
+                                  expiryDate:
+                                      DateFormat('MM/yy').format(dateTime)));
+                            }
+                          },
+                          activeValidate: false,
+                          labelText: 'Expiry Date',
+                          controller: expiryDateController,
+                          readOnly: true,
+                          prefix: const Icon(Icons.date_range),
+                        );
                     }
+
+                    return CustomTextField(
+                      onTap: () async {
+                        DateTime? dateTime = await showDatePicker(
+                            context: context,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2100));
+                        createCardBloc.add(CreateCardExpiryInputEvent(
+                            expiryDate: DateFormat('MM/yy').format(dateTime!)));
+                      },
+                      activeValidate: false,
+                      labelText: 'Expiry Date',
+                      readOnly: true,
+                      prefix: const Icon(Icons.date_range),
+                    );
                   },
-                  activeValidate: false,
-                  labelText: 'Expiry Date',
-                  controller: expiryDateController,
-                  readOnly: true,
-                  prefix: const Icon(Icons.date_range),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: CustomTextField(
-                    labelText: 'CVC/CVV',
-                    errorText: cvcController.text.length < 3 &&
-                            cvcController.text.isNotEmpty
-                        ? 'Must be 3 digits'
-                        : '',
-                    controller: cvcController,
-                    onChanged: (value) {
-                      setState(() {
-                        cvcController.text = value;
-                      });
+                  child: BlocBuilder<CreateCardBloc, CreateCardState>(
+                    buildWhen: (previous, current) =>
+                        current is CreateCardCvcInputState,
+                    builder: (context, state) {
+                      switch (state.runtimeType) {
+                        case CreateCardCvcInputState:
+                          final success = state as CreateCardCvcInputState;
+                          return CustomTextField(
+                              labelText: 'CVC/CVV',
+                              errorText: success.cvc.length < 3 &&
+                                      success.cvc.isNotEmpty
+                                  ? 'Must be 3 digits'
+                                  : '',
+                              onChanged: (value) {
+                                createCardBloc
+                                    .add(CreateCardCvcInputEvent(cvc: value));
+                              },
+                              activeValidate: success.cvc.length < 3 &&
+                                      success.cvc.isNotEmpty
+                                  ? true
+                                  : false,
+                              prefix: Icon(Icons.password,
+                                  color: success.cvc.length < 3 &&
+                                          success.cvc.isNotEmpty
+                                      ? Colors.red
+                                      : Colors.black),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(3)
+                              ]);
+                      }
+                      return CustomTextField(
+                          labelText: 'CVC/CVV',
+                          onChanged: (value) {
+                            createCardBloc
+                                .add(CreateCardCvcInputEvent(cvc: value));
+                          },
+                          activeValidate: false,
+                          prefix: const Icon(Icons.password),
+                          keyboardType: TextInputType.number);
                     },
-                    activeValidate: cvcController.text.length < 3 &&
-                            cvcController.text.isNotEmpty
-                        ? true
-                        : false,
-                    prefix: const Icon(Icons.password),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(3)
-                    ],
                   ),
                 ),
                 CustomButton(
                     onPressed: () {
                       paymentMethodsBloc.add(PaymentMethodsAddCardEvent(
                           context: context,
-                          cardName: cardNameController.text,
-                          cardNumber: cardNumberController.text,
-                          expiryDate: expiryDateController.text,
-                          cvc: cvcController.text));
+                          cardName: createCardBloc.name,
+                          cardNumber: createCardBloc.number,
+                          expiryDate: createCardBloc.expiryDate,
+                          cvc: createCardBloc.cvc));
                     },
                     content: 'Save',
                     color: AppColor.globalPink)

@@ -8,9 +8,10 @@ class ProfilePageActionState extends ProfilePageState {}
 final class ProfilePageInitial extends ProfilePageState {}
 
 class ProfilePageLoadedState extends ProfilePageState {
-  final Map<String, dynamic> userModel;
+  final String? avatar, name, address;
 
-  ProfilePageLoadedState({required this.userModel});
+  ProfilePageLoadedState(
+      {required this.avatar, required this.name, required this.address});
 }
 
 class ProfilePageUpdatePictureState extends ProfilePageState {
@@ -44,12 +45,10 @@ class ProfilePagePassInputState extends ProfilePageState {
 }
 
 class ProfilePageUpdateInfoState extends ProfilePageActionState {
-  final Map<String, dynamic> userModel;
+  final String? avatar, name;
 
-  ProfilePageUpdateInfoState({required this.userModel});
+  ProfilePageUpdateInfoState({required this.avatar, required this.name});
 }
-
-class ProfilePageErrorState extends ProfilePageState {}
 
 class ProfilePageNavigateState extends ProfilePageActionState {}
 

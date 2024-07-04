@@ -21,7 +21,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: FoodCategory.values.length,
+      length: type.length,
       child: Scaffold(
           appBar: AppBar(
               automaticallyImplyLeading: false,

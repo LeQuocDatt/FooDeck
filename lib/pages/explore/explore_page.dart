@@ -38,7 +38,7 @@ class _ExplorePageState extends State<ExplorePage> {
                   switch (state.runtimeType) {
                     case ExplorePageLoadingSuccessState:
                       final success = state as ExplorePageLoadingSuccessState;
-                      return success.userModel['address'] != null
+                      return success.userAddress != null
                           ? Row(
                               children: [
                                 const Icon(
@@ -49,8 +49,8 @@ class _ExplorePageState extends State<ExplorePage> {
                                   width: 12,
                                 ),
                                 Expanded(
-                                  child: CustomText(
-                                      content: success.userModel['address']),
+                                  child:
+                                      CustomText(content: success.userAddress!),
                                 ),
                               ],
                             )
@@ -97,13 +97,18 @@ class _ExplorePageState extends State<ExplorePage> {
                   padding: EdgeInsets.only(bottom: 40),
                   child: ListSlideBanner(),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 40),
-                  child: MiddleSlideList(),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 40),
+                    child: MiddleSlideList(),
+                  ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
-                  child: BottomListShopping(),
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 24, right: 24),
+                    child: BottomListShopping(),
+                  ),
                 )
               ],
             ),
@@ -115,7 +120,7 @@ class _ExplorePageState extends State<ExplorePage> {
               current is RestaurantCartLoadedState ||
               current is RestaurantCartRemoveItemState,
           builder: (context, state) {
-            return CartItemsListData.cartItems.isEmpty
+            return cartItems.isEmpty
                 ? const SizedBox.shrink()
                 : Badge(
                     smallSize: 25,
@@ -123,8 +128,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     backgroundColor: Colors.black,
                     label: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 3),
-                        child: CustomText(
-                            content: '${CartItemsListData.cartItems.length}')),
+                        child: CustomText(content: '${cartItems.length}')),
                     child: FloatingActionButton(
                       onPressed: () {
                         explorePageBloc.add(ExplorePageCartNavigateEvent());

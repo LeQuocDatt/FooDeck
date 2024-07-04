@@ -16,7 +16,7 @@ class BannerItems extends StatelessWidget {
     this.heartIcon,
     this.badge,
     this.voteStar,
-    this.restaurantModel,
+    required this.restaurantModel,
   });
 
   final EdgeInsets? paddingText;
@@ -32,7 +32,7 @@ class BannerItems extends StatelessWidget {
   final Widget? heartIcon;
   final Widget? badge;
   final Widget? voteStar;
-  final RestaurantModel? restaurantModel;
+  final RestaurantModel restaurantModel;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -81,40 +81,29 @@ class BannerItems extends StatelessWidget {
                         child: SizedBox(
                             width: 24,
                             height: 24,
-                            child: restaurantModel == null
-                                ? null
-                                : BlocConsumer<ExplorePageBloc,
-                                    ExplorePageState>(
-                                    buildWhen: (previous, current) =>
-                                        current is ExplorePageLikeState,
-                                    listener: (BuildContext context,
-                                        ExplorePageState state) {
-                                      if (state is ExplorePageLikeState) {
-                                        CommonUtils.toggleLike(state, context);
-                                      }
-                                    },
-                                    builder: (context, state) {
-                                      switch (state.runtimeType) {
-                                        case ExplorePageLikeState:
-                                          return SavedListData.saveFood
-                                                  .contains(restaurantModel)
-                                              ? const Icon(Icons.favorite,
-                                                  color: AppColor.globalPink)
-                                              : const Icon(
-                                                  Icons.favorite_border,
-                                                  color: Colors.white,
-                                                );
-                                      }
-                                      return SavedListData.saveFood
-                                              .contains(restaurantModel)
-                                          ? const Icon(Icons.favorite,
-                                              color: AppColor.globalPink)
-                                          : const Icon(
-                                              Icons.favorite_border,
-                                              color: Colors.white,
-                                            );
-                                    },
-                                  )),
+                            child:
+                                BlocConsumer<ExplorePageBloc, ExplorePageState>(
+                              buildWhen: (previous, current) =>
+                                  current is ExplorePageLoadingSuccessState ||
+                                  current is ExplorePageLikeState,
+                              listenWhen: (previous, current) =>
+                                  current is ExplorePageLikeState,
+                              listener: (BuildContext context,
+                                  ExplorePageState state) {
+                                if (state is ExplorePageLikeState) {
+                                  CommonUtils.toggleLike(state, context);
+                                }
+                              },
+                              builder: (context, state) {
+                                return restaurantModel.like
+                                    ? const Icon(Icons.favorite,
+                                        color: AppColor.globalPink)
+                                    : const Icon(
+                                        Icons.favorite_border,
+                                        color: Colors.white,
+                                      );
+                              },
+                            )),
                       ))
             ]),
           ),

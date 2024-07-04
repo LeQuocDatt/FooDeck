@@ -12,18 +12,19 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   Future login() async {
     try {
-      FocusScope.of(context).requestFocus(FocusNode());
-      if (Validation.passRegex.hasMatch(emailController.text)) {
+      FocusManager.instance.primaryFocus!.unfocus();
+      if (Validation.emailRegex.hasMatch(emailController.text)) {
         await supabase.auth
             .signInWithOtp(email: emailController.text, shouldCreateUser: false)
-            .then((value) => AppRouter.navigatorKey.currentState!.pushNamed(AppRouter.otp,
+            .then((value) => AppRouter.navigatorKey.currentState!.pushNamed(
+                AppRouter.otp,
                 arguments: Otp(email: emailController.text.trim())));
       } else {
-        customSnackBar(context,Toast.error, 'Not Correct!');
+        customSnackBar(context, Toast.error, 'Not Correct!');
       }
-    }  catch (e) {
+    } catch (e) {
       if (mounted) {
-        customSnackBar(context,Toast.error, e.toString());
+        customSnackBar(context, Toast.error, e.toString());
       }
     }
   }
@@ -67,17 +68,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     controller: emailController,
                                     onChanged: (value) {
                                       setState(() {
-                                        Validation.passRegex
+                                        Validation.emailRegex
                                             .hasMatch(emailController.text);
                                       });
                                     },
-                                    activeValidate: Validation.passRegex
+                                    activeValidate: Validation.emailRegex
                                                 .hasMatch(
                                                     emailController.text) ||
                                             emailController.text.isEmpty
                                         ? false
                                         : true,
-                                    errorText: Validation.passRegex.hasMatch(
+                                    errorText: Validation.emailRegex.hasMatch(
                                                 emailController.text) ||
                                             emailController.text.isEmpty
                                         ? ''
