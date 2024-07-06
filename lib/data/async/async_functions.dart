@@ -328,7 +328,6 @@ class AsyncFunctions {
             PopUp.allow,
             context,
             'This address was saved');
-        await AsyncFunctions.addLocationDataToLocalStorage();
       }
     }
   }

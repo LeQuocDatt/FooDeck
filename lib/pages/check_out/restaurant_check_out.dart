@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:template/source/export.dart';
 
 class RestaurantCheckOut extends StatefulWidget {
@@ -20,7 +21,6 @@ class _RestaurantCheckOutState extends State<RestaurantCheckOut> {
   Widget build(BuildContext context) {
     final restaurantCheckOutBloc = context.read<RestaurantCheckOutBloc>();
     final paymentMethodsBloc = context.read<PaymentMethodsBloc>();
-    final myLocationsBloc = context.read<MyLocationsBloc>();
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus!.unfocus();
@@ -40,25 +40,37 @@ class _RestaurantCheckOutState extends State<RestaurantCheckOut> {
                   child: Padding(
                     padding:
                         const EdgeInsets.only(left: 24, right: 24, top: 24),
-                    child: BlocBuilder<MyLocationsBloc, MyLocationsState>(
+                    child: BlocBuilder<RestaurantCheckOutBloc,
+                        RestaurantCheckOutState>(
                       buildWhen: (previous, current) =>
-                          current is MyLocationsSaveAddressState ||
-                          current is MyLocationsPickAddressState,
+                          current is RestaurantCheckOutActionState,
                       builder: (context, state) {
                         switch (state.runtimeType) {
-                          case MyLocationsSaveAddressState:
+                          case RestaurantCheckOutLoadedState:
                             final success =
-                                state as MyLocationsSaveAddressState;
+                                state as RestaurantCheckOutLoadedState;
                             return addressMap(success.place,
                                 success.initialCameraPosition, context);
-                          case MyLocationsPickAddressState:
+                          case RestaurantCheckOutSaveAddressState:
                             final success =
-                                state as MyLocationsPickAddressState;
+                                state as RestaurantCheckOutSaveAddressState;
+                            return addressMap(success.place,
+                                success.initialCameraPosition, context);
+                          case RestaurantCheckOutPickAddressState:
+                            final success =
+                                state as RestaurantCheckOutPickAddressState;
+                            return addressMap(success.place,
+                                success.initialCameraPosition, context);
+                          case RestaurantCheckOutRelocateAddressState:
+                            final success =
+                                state as RestaurantCheckOutRelocateAddressState;
                             return addressMap(success.place,
                                 success.initialCameraPosition, context);
                         }
-                        return addressMap(myLocationsBloc.place,
-                            myLocationsBloc.initialCameraPosition, context);
+                        return addressMap(
+                            restaurantCheckOutBloc.place,
+                            restaurantCheckOutBloc.initialCameraPosition,
+                            context);
                       },
                     ),
                   ),
@@ -214,8 +226,9 @@ class _RestaurantCheckOutState extends State<RestaurantCheckOut> {
     );
   }
 
-  Column addressMap(String? place, CameraPosition initialCameraPosition,
+  Widget addressMap(String? place, CameraPosition initialCameraPosition,
       BuildContext context) {
+    final restaurantCheckOutBloc = context.read<RestaurantCheckOutBloc>();
     return Column(
       children: [
         ListTile(
@@ -226,79 +239,210 @@ class _RestaurantCheckOutState extends State<RestaurantCheckOut> {
                   content: 'Delivery Address',
                   fontSize: 20,
                   fontWeight: FontWeight.bold),
-              place != null
-                  ? CustomText(content: place)
-                  : const SizedBox.shrink()
+              address.isEmpty
+                  ? CustomText(content: currentUser!.address ?? '')
+                  : place != null
+                      ? CustomText(content: place)
+                      : const SizedBox.shrink()
             ]),
             trailing: GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
                       context: context,
-                      builder: (context) => searchAddressBox(context));
+                      builder: (context) => GestureDetector(
+                            onTap: () {
+                              FocusManager.instance.primaryFocus!.unfocus();
+                            },
+                            child: Container(
+                              height: 800,
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(30))),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                      padding: const EdgeInsets.all(24),
+                                      child: CupertinoSearchTextField(
+                                          onSuffixTap: () {
+                                            restaurantCheckOutBloc.add(
+                                                RestaurantCheckOutRelocateAddressEvent());
+                                          },
+                                          suffixMode:
+                                              OverlayVisibilityMode.always,
+                                          suffixIcon:
+                                              const Icon(Icons.my_location),
+                                          autofocus: true,
+                                          placeholder: 'Search Location',
+                                          onChanged: (value) {
+                                            restaurantCheckOutBloc.add(
+                                                RestaurantCheckOutSearchEvent(
+                                                    search: value));
+                                          })),
+                                  Expanded(
+                                    child: BlocBuilder<RestaurantCheckOutBloc,
+                                        RestaurantCheckOutState>(
+                                      buildWhen: (previous, current) => current
+                                          is RestaurantCheckOutSearchState,
+                                      builder: (context, state) {
+                                        switch (state.runtimeType) {
+                                          case RestaurantCheckOutSearchState:
+                                            final success = state
+                                                as RestaurantCheckOutSearchState;
+                                            return Column(children: [
+                                              success.search.isEmpty
+                                                  ? const SizedBox()
+                                                  : success.responses.isEmpty
+                                                      ? const LinearProgressIndicator(
+                                                          color: Colors.grey)
+                                                      : Divider(
+                                                          thickness: 8,
+                                                          color:
+                                                              Colors.grey[200],
+                                                        ),
+                                              Expanded(
+                                                child: success.search.isEmpty
+                                                    ? _listAddress(
+                                                        address, context)
+                                                    : _listNewAddress(
+                                                        success.responses,
+                                                        context),
+                                              )
+                                            ]);
+                                        }
+                                        return _listAddress(address, context);
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ));
                 },
                 child: Image.asset(Assets.pencil))),
         Padding(
           padding: const EdgeInsets.only(top: 16),
-          child: GestureDetector(
-              onTap: () {
-                showGeneralDialog(
-                    transitionDuration: const Duration(milliseconds: 600),
-                    context: context,
-                    transitionBuilder: (_, animation, __, child) {
-                      Tween<double> scale = Tween(begin: 0, end: 1);
-                      return ScaleTransition(
-                          scale: scale.animate(CurvedAnimation(
-                              parent: animation, curve: Curves.easeInOut)),
-                          child: child);
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: SizedBox(
+                  height: 160,
+                  child: MapboxMap(
+                    doubleClickZoomEnabled: false,
+                    dragEnabled: false,
+                    zoomGesturesEnabled: false,
+                    scrollGesturesEnabled: false,
+                    tiltGesturesEnabled: false,
+                    onMapIdle: () {
+                      CommonUtils.addCurrentMarker(initialCameraPosition);
                     },
-                    pageBuilder: (_, __, ___) => Stack(
-                          children: [
-                            mapboxMap(initialCameraPosition, address),
-                            SafeArea(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 24, top: 24),
-                                child: BackButton(
-                                  style: const ButtonStyle(
-                                      backgroundColor:
-                                          WidgetStatePropertyAll(Colors.white)),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            )
-                          ],
-                        ));
-              },
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: SizedBox(
-                      height: 160,
-                      child: Stack(
-                        children: [
-                          MapboxMap(
-                            onMapIdle: () {
-                              CommonUtils.addCurrentMarker(
-                                  initialCameraPosition);
-                            },
-                            accessToken: dotenv.env['MAPBOX_ACCESS_TOKEN'],
-                            initialCameraPosition: initialCameraPosition,
-                            onMapCreated: CommonUtils.onMapCreated,
-                            onStyleLoadedCallback: () {
-                              if (CommonUtils.locationCameras(address)
-                                  .isNotEmpty) {
-                                CommonUtils.onStyleLoadedCallback();
-                              }
-                            },
-                            minMaxZoomPreference:
-                                const MinMaxZoomPreference(14, 17),
-                          ),
-                          Container(color: Colors.transparent, height: 160)
-                        ],
-                      )))),
+                    accessToken: dotenv.env['MAPBOX_ACCESS_TOKEN'],
+                    initialCameraPosition: initialCameraPosition,
+                    onMapCreated: CommonUtils.onMapCreated,
+                    minMaxZoomPreference: const MinMaxZoomPreference(14, 17),
+                  ))),
         ),
       ],
     );
   }
+}
+
+Widget _listAddress(List<AddressModel> places, BuildContext context) {
+  final restaurantCheckOutBloc = context.read<RestaurantCheckOutBloc>();
+  return ListView.separated(
+      padding: EdgeInsets.zero,
+      itemCount: places.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+            onTap: () {
+              CommonUtils.moveCamera(places[index].location);
+              Future.delayed(const Duration(milliseconds: 1000), () {
+                if (context.mounted) {
+                  showDialog(
+                    context: context,
+                    builder: (_) => CupertinoAlertDialog(
+                      title: const CustomText(
+                          content: 'Do you want to chose this location?',
+                          textOverflow: TextOverflow.visible),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              restaurantCheckOutBloc.add(
+                                  RestaurantCheckOutPickAddressEvent(
+                                      place: places[index].address,
+                                      initialCameraPosition: CameraPosition(
+                                          target: places[index].location,
+                                          zoom: 15)));
+                            },
+                            child: const CustomText(
+                                content: 'Yes', color: AppColor.globalPink)),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const CustomText(content: 'No'))
+                      ],
+                    ),
+                  );
+                }
+              });
+            },
+            leading: const CustomText(content: 'Saved', color: Colors.grey),
+            title: CustomText(
+                content: places[index].name, fontWeight: FontWeight.bold),
+            subtitle: CustomText(
+                content: places[index].address,
+                textOverflow: TextOverflow.visible));
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider());
+}
+
+Widget _listNewAddress(List<AddressModel> places, BuildContext context) {
+  final restaurantCheckOutBloc = context.read<RestaurantCheckOutBloc>();
+  return ListView.separated(
+      padding: EdgeInsets.zero,
+      itemCount: places.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+            onTap: () {
+              CommonUtils.moveCamera(places[index].location);
+              Future.delayed(const Duration(milliseconds: 1000), () {
+                if (context.mounted) {
+                  showDialog(
+                    context: context,
+                    builder: (_) => CupertinoAlertDialog(
+                      title: const CustomText(
+                          content: 'Do you want to save this location?',
+                          textOverflow: TextOverflow.visible),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              restaurantCheckOutBloc.add(
+                                  RestaurantCheckOutSaveAddressEvent(
+                                      place: places[index].address,
+                                      initialCameraPosition: CameraPosition(
+                                          target: places[index].location,
+                                          zoom: 15)));
+                            },
+                            child: const CustomText(
+                                content: 'Save', color: AppColor.globalPink)),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const CustomText(content: 'No'))
+                      ],
+                    ),
+                  );
+                }
+              });
+            },
+            leading: const Icon(Icons.location_on_outlined),
+            title: CustomText(
+                content: places[index].name, fontWeight: FontWeight.bold),
+            subtitle: CustomText(
+                content: places[index].address,
+                textOverflow: TextOverflow.visible));
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider());
 }

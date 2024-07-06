@@ -1,3 +1,4 @@
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:template/source/export.dart';
 
 part 'profile_page_extension_body.dart';

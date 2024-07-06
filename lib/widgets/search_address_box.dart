@@ -60,35 +60,10 @@ Widget listAddress(List<AddressModel> places, BuildContext context) {
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
             onTap: () {
-              CommonUtils.moveCamera(index, places);
-              Future.delayed(const Duration(milliseconds: 1000), () {
-                if (context.mounted) {
-                  showDialog(
-                    context: context,
-                    builder: (_) => CupertinoAlertDialog(
-                      title: const CustomText(
-                          content: 'Do you want to chose this location?',
-                          textOverflow: TextOverflow.visible),
-                      actions: [
-                        TextButton(
-                            onPressed: () {
-                              myLocationsBloc.add(MyLocationsPickAddressEvent(
-                                  addressModel: places[index], index: index));
-                            },
-                            child: const CustomText(
-                                content: 'Yes', color: AppColor.globalPink)),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const CustomText(content: 'No'))
-                      ],
-                    ),
-                  );
-                }
-              });
+              myLocationsBloc.add(MyLocationsPickAddressEvent(
+                  addressModel: places[index], index: index));
             },
-            leading: const Icon(Icons.location_on_outlined),
+            leading: const CustomText(content: 'Saved', color: Colors.grey),
             title: CustomText(
                 content: places[index].name, fontWeight: FontWeight.bold),
             subtitle: CustomText(
@@ -106,7 +81,7 @@ Widget listNewAddress(List<AddressModel> places, BuildContext context) {
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
             onTap: () {
-              CommonUtils.moveCamera(index, places);
+              CommonUtils.moveCamera(places[index].location);
               Future.delayed(const Duration(milliseconds: 1000), () {
                 if (context.mounted) {
                   showDialog(

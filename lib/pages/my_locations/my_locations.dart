@@ -9,8 +9,6 @@ class MyLocation extends StatefulWidget {
 }
 
 class _MyLocationState extends State<MyLocation> {
-  PageController pageController =
-      PageController(initialPage: 0, viewportFraction: 0.85);
   @override
   void initState() {
     context.read<MyLocationsBloc>().add(MyLocationsInitialEvent());
@@ -25,41 +23,34 @@ class _MyLocationState extends State<MyLocation> {
         switch (state.runtimeType) {
           case MyLocationsLoadedState:
             final success = state as MyLocationsLoadedState;
-            return myLocationsBody(
-                success.initialCameraPosition, success.address, context);
+            return myLocationsBody(success.address, context);
           case MyLocationsPickAddressState:
             final success = state as MyLocationsPickAddressState;
-            return myLocationsBody(
-                success.initialCameraPosition, success.address, context);
+            return myLocationsBody(success.address, context);
           case MyLocationsSaveAddressState:
             final success = state as MyLocationsSaveAddressState;
-            return myLocationsBody(
-                success.initialCameraPosition, success.address, context);
+            return myLocationsBody(success.address, context);
           case MyLocationsDrawMapState:
             final success = state as MyLocationsDrawMapState;
-            return myLocationsBody(
-                success.initialCameraPosition, success.address, context);
+            return myLocationsBody(success.address, context);
           case MyLocationsUpdateAddressState:
             final success = state as MyLocationsUpdateAddressState;
-            return myLocationsBody(
-                success.initialCameraPosition, success.address, context);
+            return myLocationsBody(success.address, context);
           case MyLocationsRemoveAddressState:
             final success = state as MyLocationsRemoveAddressState;
-            return myLocationsBody(
-                success.initialCameraPosition, success.address, context);
+            return myLocationsBody(success.address, context);
         }
-        return const SizedBox.shrink();
+        return myLocationsBody(address, context);
       },
     );
   }
 
-  Widget myLocationsBody(CameraPosition initialCameraPosition,
-      List<AddressModel> cards, BuildContext context) {
+  Widget myLocationsBody(List<AddressModel> cards, BuildContext context) {
     final myLocationsBloc = context.read<MyLocationsBloc>();
     return Scaffold(
       body: Stack(
         children: [
-          mapboxMap(initialCameraPosition, cards),
+          mapboxMap(myLocationsBloc.initialCameraPosition, cards),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -69,7 +60,7 @@ class _MyLocationState extends State<MyLocation> {
                   child: PageView.builder(
                       itemCount: cards.length,
                       scrollDirection: Axis.horizontal,
-                      controller: pageController,
+                      controller: myLocationsBloc.pageController,
                       onPageChanged: (value) {
                         myLocationsBloc
                             .add(MyLocationsDrawMapEvent(index: value));
@@ -154,11 +145,11 @@ class _MyLocationState extends State<MyLocation> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(right: 24, bottom: 180),
         child: FloatingActionButton(
-          shape: const CircleBorder(),
           backgroundColor: AppColor.globalPink,
           onPressed: () {
             CommonUtils.mapController.animateCamera(
-                CameraUpdate.newCameraPosition(initialCameraPosition));
+                CameraUpdate.newCameraPosition(
+                    myLocationsBloc.initialCameraPosition));
           },
           child: const Icon(
             Icons.my_location,

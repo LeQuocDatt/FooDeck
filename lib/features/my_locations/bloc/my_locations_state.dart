@@ -4,11 +4,9 @@ part of 'my_locations_bloc.dart';
 sealed class MyLocationsState {}
 
 class MyLocationsActionState extends MyLocationsState {
-  final CameraPosition initialCameraPosition;
   final List<AddressModel> address;
 
-  MyLocationsActionState(
-      {required this.initialCameraPosition, required this.address});
+  MyLocationsActionState({required this.address});
 }
 
 final class MyLocationsInitial extends MyLocationsState {}
@@ -16,8 +14,7 @@ final class MyLocationsInitial extends MyLocationsState {}
 class MyLocationsLoadingState extends MyLocationsState {}
 
 class MyLocationsLoadedState extends MyLocationsActionState {
-  MyLocationsLoadedState(
-      {required super.initialCameraPosition, required super.address});
+  MyLocationsLoadedState({required super.address});
 }
 
 class MyLocationsSearchState extends MyLocationsState {
@@ -30,34 +27,21 @@ class MyLocationsSearchState extends MyLocationsState {
 class MyLocationsEditAddressState extends MyLocationsState {}
 
 class MyLocationsPickAddressState extends MyLocationsActionState {
-  final String place;
-
-  MyLocationsPickAddressState(
-      {required super.initialCameraPosition,
-      required super.address,
-      required this.place});
+  MyLocationsPickAddressState({required super.address});
 }
 
 class MyLocationsSaveAddressState extends MyLocationsActionState {
-  final String place;
-
-  MyLocationsSaveAddressState(
-      {required super.initialCameraPosition,
-      required super.address,
-      required this.place});
+  MyLocationsSaveAddressState({required super.address});
 }
 
 class MyLocationsDrawMapState extends MyLocationsActionState {
-  MyLocationsDrawMapState(
-      {required super.initialCameraPosition, required super.address});
+  MyLocationsDrawMapState({required super.address});
 }
 
 class MyLocationsUpdateAddressState extends MyLocationsActionState {
-  MyLocationsUpdateAddressState(
-      {required super.initialCameraPosition, required super.address});
+  MyLocationsUpdateAddressState({required super.address});
 }
 
 class MyLocationsRemoveAddressState extends MyLocationsActionState {
-  MyLocationsRemoveAddressState(
-      {required super.initialCameraPosition, required super.address});
+  MyLocationsRemoveAddressState({required super.address});
 }

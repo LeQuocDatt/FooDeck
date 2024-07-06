@@ -40,7 +40,9 @@ class _OtpState extends State<Otp> {
 
   Future resendOTP() async {
     try {
-      await supabase.auth.resend(email: widget.email, type: OtpType.email).then(
+      await supabase.auth
+          .resend(email: widget.email, type: OtpType.signup)
+          .then(
         (value) {
           if (mounted) {
             customSnackBar(context, Toast.error, 'OTP in your email');

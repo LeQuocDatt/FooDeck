@@ -279,6 +279,7 @@ class CommonUtils {
       if (removeLayer == true) {
         await mapController.removeLayer("lines");
         await mapController.removeSource("fills");
+        await mapController.clearSymbols();
       }
 
       // Add new source and lineLayer
@@ -318,13 +319,13 @@ class CommonUtils {
     addSourceAndLineLayer(0, address, false);
   }
 
-  static Future moveCamera(int index, List<AddressModel> tempAddress) async {
+  static Future moveCamera(LatLng target) async {
     FocusManager.instance.primaryFocus?.unfocus();
     await mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: tempAddress[index].location, zoom: 15)));
+        CameraPosition(target: target, zoom: 15)));
     await mapController.addSymbol(
       SymbolOptions(
-        geometry: tempAddress[index].location,
+        geometry: target,
         iconSize: 2,
         iconImage: Assets.marker,
       ),

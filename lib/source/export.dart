@@ -1,9 +1,7 @@
 // Package
 export 'dart:async';
 
-export 'package:animated_text_kit/animated_text_kit.dart';
 export 'package:cached_network_image/cached_network_image.dart';
-export 'package:equatable/equatable.dart';
 export 'package:flutter/gestures.dart';
 export 'package:flutter/material.dart';
 export 'package:flutter/services.dart';
@@ -50,6 +48,7 @@ export 'package:template/main.dart';
 export 'package:template/pages/cart/restaurant_cart.dart';
 export 'package:template/pages/check_out/restaurant_check_out.dart';
 export 'package:template/pages/create_card/create_card.dart';
+export 'package:template/pages/edit_account/component/avatar.dart';
 export 'package:template/pages/edit_account/edit_account.dart';
 export 'package:template/pages/explore/components/banner_items.dart';
 export 'package:template/pages/explore/components/explore_page_bottom_banner.dart';
@@ -75,7 +74,6 @@ export 'package:template/pages/payment_methods/payment_methods.dart';
 export 'package:template/pages/pick_addon/restaurant_addon.dart';
 export 'package:template/pages/profile/model/profile_icons.dart';
 export 'package:template/pages/profile/profile_page.dart';
-export 'package:template/pages/profile/widget/avatar.dart';
 export 'package:template/pages/profile/widget/detail_history_order.dart';
 export 'package:template/pages/profile/widget/my_orders.dart';
 export 'package:template/pages/profile/widget/my_reviews.dart';

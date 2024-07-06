@@ -84,7 +84,8 @@ Widget locationBottomCard(
                           return ListTile(
                               onTap: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
-                                CommonUtils.moveCamera(index, success.responses)
+                                CommonUtils.moveCamera(
+                                        success.responses[index].location)
                                     .then((value) {
                                   if (context.mounted) {
                                     return showCupertinoModalPopup(
