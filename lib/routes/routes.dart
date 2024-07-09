@@ -64,7 +64,9 @@ class AppRouter {
         return pageBuilder((_) => const MyReviews(), settings: settings);
       case detailHistoryOrder:
         final args = settings.arguments as DetailHistoryOrder;
-        return pageBuilder((_) => DetailHistoryOrder(res: args.res),
+        return pageBuilder(
+            (_) =>
+                DetailHistoryOrder(orderCompleteModel: args.orderCompleteModel),
             settings: settings);
       case restaurantCheckOut:
         return pageBuilder((_) => const RestaurantCheckOut(),

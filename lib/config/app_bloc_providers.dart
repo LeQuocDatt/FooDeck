@@ -1,10 +1,14 @@
+import 'package:template/features/my_orders/bloc/my_orders_bloc.dart';
 import 'package:template/source/export.dart';
 
 class AppBlocProviders {
   static List<BlocProvider> allBlocProviders() {
     return [
+      BlocProvider<MyOrdersBloc>(
+        create: (context) => MyOrdersBloc(),
+      ),
       BlocProvider<MyLocationsBloc>(
-        create: (context) => MyLocationsBloc()..add(MyLocationsInitialEvent()),
+        create: (context) => MyLocationsBloc(),
       ),
       BlocProvider<SearchPageBloc>(
         create: (context) => SearchPageBloc(),

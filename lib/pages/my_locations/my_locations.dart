@@ -145,6 +145,7 @@ class _MyLocationState extends State<MyLocation> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(right: 24, bottom: 180),
         child: FloatingActionButton(
+          shape: const CircleBorder(),
           backgroundColor: AppColor.globalPink,
           onPressed: () {
             CommonUtils.mapController.animateCamera(

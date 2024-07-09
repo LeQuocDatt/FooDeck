@@ -33,37 +33,39 @@ class _OrderCompleteState extends State<OrderComplete> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-                height: 100,
-                child: Lottie.asset(Assets.done, fit: BoxFit.cover)),
-            const CustomText(
-                content: 'Thank you for placing the order',
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
-            const CustomText(
-                content: 'We’ll get to you as soon as possible',
-                color: Colors.grey),
-            Padding(
-              padding: const EdgeInsets.only(top: 50, bottom: 70),
-              child: SizedBox(
-                  height: 250,
-                  child: Lottie.asset(Assets.delivery, fit: BoxFit.cover)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: CustomButton(
-                  onPressed: () {
-                    timer.cancel();
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, AppRouter.homePage, (route) => false);
-                  },
-                  content: 'Go Home',
-                  color: AppColor.globalPink),
-            )
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                  height: 100,
+                  child: Lottie.asset(Assets.done, fit: BoxFit.cover)),
+              const CustomText(
+                  content: 'Thank you for placing the order',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+              const CustomText(
+                  content: 'We’ll get to you as soon as possible',
+                  color: Colors.grey),
+              Padding(
+                padding: const EdgeInsets.only(top: 50, bottom: 70),
+                child: SizedBox(
+                    height: 250,
+                    child: Lottie.asset(Assets.delivery, fit: BoxFit.cover)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: CustomButton(
+                    onPressed: () {
+                      timer.cancel();
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, AppRouter.homePage, (route) => false);
+                    },
+                    content: 'Go Home',
+                    color: AppColor.globalPink),
+              )
+            ],
+          ),
         ),
       ),
     );

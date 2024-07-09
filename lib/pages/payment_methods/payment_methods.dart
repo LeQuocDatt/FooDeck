@@ -47,7 +47,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                       children: [
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 24, 0, 30),
+                            padding: const EdgeInsets.fromLTRB(24, 24, 10, 30),
                             child: CustomSlidePage(
                                 currentCard: paymentMethodsBloc.currentCard,
                                 itemCount: payments.length,
